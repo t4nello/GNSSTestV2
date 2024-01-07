@@ -1,16 +1,22 @@
-# This is a sample Python script.
+# main.py
+import paho.mqtt.client as mqtt
+from gps_metric_handler import GpsMetricHandler
+from config_manager import ConfigManager
+from session_manager import SessionManager
+from algorithm import Algorithm
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+config_manager = ConfigManager("config.json")
 
+mqtt_handler = mqtt.Client()
+session_manager = SessionManager(mqtt_handler, config_manager)
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+algorithm_instance = Algorithm(mqtt_handler)
 
+gps_handler = GpsMetricHandler(mqtt_handler, config_manager, session_manager, algorithm_instance)
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
+mqtt_handler.on_connect = gps_handler.on_connect
+mqtt_handler.on_message = gps_handler.on_message
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+mqtt_handler.connect("192.168.0.123", 1883)
+
+mqtt_handler.loop_forever()
