@@ -1,0 +1,1561 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 2,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "e2a0d58b-4f41-4b3d-8217-b53923ac3d4c"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "decimals": 10,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unitScale": true
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 10,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "10.3.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "e2a0d58b-4f41-4b3d-8217-b53923ac3d4c"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "WITH measurements AS (\r\n    SELECT \r\n        latitude, \r\n        longitude, \r\n        sessionid,\r\n        device\r\n    FROM \r\n        mqtt_consumer\r\n    WHERE \r\n        sessionid = 42\r\n        AND device IN ('94:B9:7E:13:BF:EB', '58:BF:25:DA:15:49', '00:1E:42:2B:9C:13')\r\n),\r\nreference_data AS (\r\n    SELECT \r\n         MODE() WITHIN GROUP (ORDER BY latitude) AS modal_latitude,\r\n        MODE() WITHIN GROUP (ORDER BY longitude) AS modal_longitude\r\n    FROM \r\n        mqtt_consumer\r\n    WHERE \r\n        sessionid = 39\r\n),\r\nconverted_measurements AS (\r\n    SELECT\r\n        device,\r\n        ST_Transform(\r\n            ST_SetSRID(ST_MakePoint(longitude, latitude), 4326),\r\n            32633) AS utm_measurements_point,\r\n        ST_X(\r\n            ST_Transform(\r\n                ST_SetSRID(ST_MakePoint(longitude, latitude), 4326),\r\n                32633)) AS utm_measurements_x,\r\n        ST_Y(\r\n            ST_Transform(\r\n                ST_SetSRID(ST_MakePoint(longitude, latitude), 4326),\r\n                32633)) AS utm_measurements_y\r\n    FROM \r\n        measurements\r\n),\r\nconverted_reference_data AS (\r\n    SELECT\r\n        ST_Transform(\r\n            ST_SetSRID(ST_MakePoint(modal_longitude, modal_latitude), 4326),\r\n            32633) AS utm_reference_point,\r\n        ST_X(\r\n            ST_Transform(\r\n                ST_SetSRID(ST_MakePoint(modal_longitude, modal_latitude), 4326),\r\n                32633)) AS utm_reference_x,\r\n        ST_Y(\r\n            ST_Transform(\r\n                ST_SetSRID(ST_MakePoint(modal_longitude, modal_latitude), 4326),\r\n                32633)) AS utm_reference_y\r\n    FROM \r\n        reference_data\r\n)\r\nSELECT\r\n    device,\r\n    (SQRT(AVG(POWER(CAST(utm_measurements_x AS numeric) - utm_reference_x, 2))) + SQRT(AVG(POWER(CAST(utm_measurements_y AS numeric) - utm_reference_y, 2)))) AS drms_radius,\r\n    2 * (SQRT(AVG(POWER(CAST(utm_measurements_x AS numeric) - utm_reference_x, 2))) + SQRT(AVG(POWER(CAST(utm_measurements_y AS numeric) - utm_reference_y, 2)))) AS twodrms_radius,\r\n    0.62 * SQRT(AVG(POWER(CAST(utm_measurements_x AS numeric) - utm_reference_x, 2))) + 0.56 * SQRT(AVG(POWER(CAST(utm_measurements_y AS numeric) - utm_reference_y, 2))) AS cep_radius\r\nFROM \r\n    converted_measurements\r\nJOIN \r\n    converted_reference_data ON 1=1\r\nGROUP BY \r\n    device;\r\n",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "RMSE_MODE",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "e2a0d58b-4f41-4b3d-8217-b53923ac3d4c"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "decimals": 10,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unitScale": true
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 11,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "10.3.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "e2a0d58b-4f41-4b3d-8217-b53923ac3d4c"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "WITH measurements AS (\r\n    SELECT \r\n        latitude, \r\n        longitude, \r\n        sessionid,\r\n        device\r\n    FROM \r\n        mqtt_consumer\r\n    WHERE \r\n        sessionid = 42\r\n     \r\n),\r\nreference_data AS (\r\n    SELECT \r\n         MODE() WITHIN GROUP (ORDER BY latitude) AS modal_latitude,\r\n        MODE() WITHIN GROUP (ORDER BY longitude) AS modal_longitude\r\n    FROM \r\n        mqtt_consumer\r\n    WHERE \r\n        sessionid = 39\r\n),\r\nconverted_measurements AS (\r\n    SELECT\r\n        device,\r\n        ST_Transform(\r\n            ST_SetSRID(ST_MakePoint(longitude, latitude), 4326),\r\n            32633) AS utm_measurements_point,\r\n        ST_X(\r\n            ST_Transform(\r\n                ST_SetSRID(ST_MakePoint(longitude, latitude), 4326),\r\n                32633)) AS utm_measurements_x,\r\n        ST_Y(\r\n            ST_Transform(\r\n                ST_SetSRID(ST_MakePoint(longitude, latitude), 4326),\r\n                32633)) AS utm_measurements_y\r\n    FROM \r\n        measurements\r\n),\r\nconverted_reference_data AS (\r\n    SELECT\r\n        ST_Transform(\r\n            ST_SetSRID(ST_MakePoint(modal_longitude, modal_latitude), 4326),\r\n            32633) AS utm_reference_point,\r\n        ST_X(\r\n            ST_Transform(\r\n                ST_SetSRID(ST_MakePoint(modal_longitude, modal_latitude), 4326),\r\n                32633)) AS utm_reference_x,\r\n        ST_Y(\r\n            ST_Transform(\r\n                ST_SetSRID(ST_MakePoint(modal_longitude, modal_latitude), 4326),\r\n                32633)) AS utm_reference_y\r\n    FROM \r\n        reference_data\r\n)\r\nSELECT\r\n    device,\r\n    (SQRT(AVG(POWER(CAST(utm_measurements_x AS numeric) - utm_reference_x, 2))) + SQRT(AVG(POWER(CAST(utm_measurements_y AS numeric) - utm_reference_y, 2)))) AS drms_radius,\r\n    2 * (SQRT(AVG(POWER(CAST(utm_measurements_x AS numeric) - utm_reference_x, 2))) + SQRT(AVG(POWER(CAST(utm_measurements_y AS numeric) - utm_reference_y, 2)))) AS twodrms_radius,\r\n    0.62 * SQRT(AVG(POWER(CAST(utm_measurements_x AS numeric) - utm_reference_x, 2))) + 0.56 * SQRT(AVG(POWER(CAST(utm_measurements_y AS numeric) - utm_reference_y, 2))) AS cep_radius\r\nFROM \r\n    converted_measurements\r\nJOIN \r\n    converted_reference_data ON 1=1\r\nGROUP BY \r\n    device;\r\n",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "RMSE_AVERAGE",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "e2a0d58b-4f41-4b3d-8217-b53923ac3d4c"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "decimals": 8,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unitScale": true
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 8
+      },
+      "id": 9,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "10.3.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "e2a0d58b-4f41-4b3d-8217-b53923ac3d4c"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT  mode() WITHIN GROUP (ORDER BY latitude ) AS modal_latitude  FROM mqtt_consumer mc  where  sessionid = $getSessionIds ",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        },
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "e2a0d58b-4f41-4b3d-8217-b53923ac3d4c"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "hide": false,
+          "rawQuery": true,
+          "rawSql": "SELECT  mode() WITHIN GROUP (ORDER BY longitude) AS modal_longitude  FROM mqtt_consumer mc  where  sessionid = $getSessionIds ",
+          "refId": "B",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "mode",
+      "transformations": [
+        {
+          "id": "concatenate",
+          "options": {}
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "e2a0d58b-4f41-4b3d-8217-b53923ac3d4c"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "center",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "decimals": 6,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unitScale": true
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Count"
+            },
+            "properties": [
+              {
+                "id": "decimals",
+                "value": 0
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 16
+      },
+      "id": 8,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Last *"
+          }
+        ]
+      },
+      "pluginVersion": "10.3.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "e2a0d58b-4f41-4b3d-8217-b53923ac3d4c"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT \"time\", device, latitude, longitude\r\nFROM mqtt_consumer where sessionid = $getSessionIds \r\n\r\n",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [
+                  {
+                    "name": "\"time\"",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              },
+              {
+                "name": "COUNT",
+                "parameters": [
+                  {
+                    "name": "latitude",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              },
+              {
+                "parameters": [
+                  {
+                    "name": "device",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              }
+            ],
+            "groupBy": [],
+            "limit": 50,
+            "whereJsonTree": {
+              "children1": [],
+              "id": "bb8bab9b-89ab-4cde-b012-318b0b2a84ef",
+              "properties": {
+                "conjunction": "OR"
+              },
+              "type": "group"
+            }
+          },
+          "table": "mqtt_consumer"
+        },
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "e2a0d58b-4f41-4b3d-8217-b53923ac3d4c"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "hide": true,
+          "rawQuery": true,
+          "rawSql": "SELECT time, device, latitude AS latitude_mode , longitude AS longitude_mode\r\nFROM mqtt_consumer\r\nWHERE sessionid = $getSessionIds AND device = '$getDevices'\r\nGROUP BY time, device, latitude, longitude\r\nORDER BY COUNT(*) DESC\r\nLIMIT 1;\r\n",
+          "refId": "B",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Statistics",
+      "transformations": [
+        {
+          "id": "prepareTimeSeries",
+          "options": {
+            "format": "multi"
+          }
+        },
+        {
+          "id": "concatenate",
+          "options": {}
+        },
+        {
+          "id": "reduce",
+          "options": {
+            "includeTimeField": false,
+            "labelsToFields": true,
+            "mode": "seriesToRows",
+            "reducers": [
+              "max",
+              "mean",
+              "stdDev",
+              "count"
+            ]
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "e2a0d58b-4f41-4b3d-8217-b53923ac3d4c"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "decimals": 6,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unitScale": true
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 24
+      },
+      "id": 7,
+      "options": {
+        "basemap": {
+          "config": {},
+          "name": "Layer 0",
+          "type": "osm-standard"
+        },
+        "controls": {
+          "mouseWheelZoom": true,
+          "showAttribution": true,
+          "showDebug": false,
+          "showMeasure": false,
+          "showScale": false,
+          "showZoom": true
+        },
+        "layers": [
+          {
+            "config": {
+              "arrow": 0,
+              "style": {
+                "color": {
+                  "field": "time",
+                  "fixed": "dark-green"
+                },
+                "lineWidth": 2,
+                "opacity": 1,
+                "rotation": {
+                  "fixed": 0,
+                  "max": 360,
+                  "min": -360,
+                  "mode": "mod"
+                },
+                "size": {
+                  "fixed": 2,
+                  "max": 15,
+                  "min": 2
+                },
+                "symbol": {
+                  "fixed": "img/icons/marker/circle.svg",
+                  "mode": "fixed"
+                },
+                "textConfig": {
+                  "fontSize": 12,
+                  "offsetX": 0,
+                  "offsetY": 0,
+                  "textAlign": "center",
+                  "textBaseline": "middle"
+                }
+              }
+            },
+            "location": {
+              "latitude": "latitude",
+              "longitude": "longitude",
+              "mode": "coords"
+            },
+            "name": "Layer 1",
+            "tooltip": true,
+            "type": "route"
+          }
+        ],
+        "tooltip": {
+          "mode": "details"
+        },
+        "view": {
+          "allLayers": true,
+          "id": "fit",
+          "lat": 0,
+          "lon": 0,
+          "zoom": 18
+        }
+      },
+      "pluginVersion": "10.3.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "e2a0d58b-4f41-4b3d-8217-b53923ac3d4c"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT latitude, longitude, \"time\" FROM mqtt_consumer WHERE device = '$getDevices' and sessionid = $getSessionIds ",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [
+                  {
+                    "name": "latitude",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              },
+              {
+                "parameters": [
+                  {
+                    "name": "longitude",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              },
+              {
+                "parameters": [
+                  {
+                    "name": "\"time\"",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
+          "table": "mqtt_consumer"
+        }
+      ],
+      "title": "Location",
+      "type": "geomap"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "e2a0d58b-4f41-4b3d-8217-b53923ac3d4c"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 6,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unitScale": true
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 24
+      },
+      "id": 2,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "10.1.4",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "e2a0d58b-4f41-4b3d-8217-b53923ac3d4c"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT \"time\", device, latitude FROM mqtt_consumer WHERE sessionid = $getSessionIds ",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [
+                  {
+                    "name": "\"time\"",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              },
+              {
+                "parameters": [
+                  {
+                    "name": "device",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              },
+              {
+                "parameters": [
+                  {
+                    "name": "latitude",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              }
+            ],
+            "groupBy": [],
+            "limit": 50,
+            "whereJsonTree": {
+              "children1": [
+                {
+                  "id": "a8b9bbb9-cdef-4012-b456-718b0b766ce6",
+                  "properties": {
+                    "field": "sessionid",
+                    "operator": "equal",
+                    "value": [
+                      111
+                    ],
+                    "valueSrc": [
+                      "value"
+                    ],
+                    "valueType": [
+                      "number"
+                    ]
+                  },
+                  "type": "rule"
+                }
+              ],
+              "id": "bb8bab9b-89ab-4cde-b012-318b0b2a84ef",
+              "properties": {
+                "conjunction": "OR"
+              },
+              "type": "group"
+            },
+            "whereString": "sessionid = 111"
+          },
+          "table": "mqtt_consumer"
+        }
+      ],
+      "title": "Latitude",
+      "transformations": [
+        {
+          "id": "prepareTimeSeries",
+          "options": {
+            "format": "multi"
+          }
+        }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "e2a0d58b-4f41-4b3d-8217-b53923ac3d4c"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 6,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 34
+      },
+      "id": 3,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "10.1.4",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "e2a0d58b-4f41-4b3d-8217-b53923ac3d4c"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT \"time\", device, longitude FROM mqtt_consumer WHERE sessionid = $getSessionIds ",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [
+                  {
+                    "name": "\"time\"",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              },
+              {
+                "parameters": [
+                  {
+                    "name": "device",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              },
+              {
+                "parameters": [
+                  {
+                    "name": "latitude",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              }
+            ],
+            "groupBy": [],
+            "limit": 50,
+            "whereJsonTree": {
+              "children1": [
+                {
+                  "id": "a8b9bbb9-cdef-4012-b456-718b0b766ce6",
+                  "properties": {
+                    "field": "sessionid",
+                    "operator": "equal",
+                    "value": [
+                      111
+                    ],
+                    "valueSrc": [
+                      "value"
+                    ],
+                    "valueType": [
+                      "number"
+                    ]
+                  },
+                  "type": "rule"
+                }
+              ],
+              "id": "bb8bab9b-89ab-4cde-b012-318b0b2a84ef",
+              "properties": {
+                "conjunction": "OR"
+              },
+              "type": "group"
+            },
+            "whereString": "sessionid = 111"
+          },
+          "table": "mqtt_consumer"
+        }
+      ],
+      "title": "Longitude",
+      "transformations": [
+        {
+          "id": "prepareTimeSeries",
+          "options": {
+            "format": "multi"
+          }
+        }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "e2a0d58b-4f41-4b3d-8217-b53923ac3d4c"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 2,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 34
+      },
+      "id": 5,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "10.1.4",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "e2a0d58b-4f41-4b3d-8217-b53923ac3d4c"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT \"time\", device, altitude  FROM mqtt_consumer WHERE sessionid = $getSessionIds ",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [
+                  {
+                    "name": "\"time\"",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              },
+              {
+                "parameters": [
+                  {
+                    "name": "device",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              },
+              {
+                "parameters": [
+                  {
+                    "name": "latitude",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              }
+            ],
+            "groupBy": [],
+            "limit": 50,
+            "whereJsonTree": {
+              "children1": [
+                {
+                  "id": "a8b9bbb9-cdef-4012-b456-718b0b766ce6",
+                  "properties": {
+                    "field": "sessionid",
+                    "operator": "equal",
+                    "value": [
+                      111
+                    ],
+                    "valueSrc": [
+                      "value"
+                    ],
+                    "valueType": [
+                      "number"
+                    ]
+                  },
+                  "type": "rule"
+                }
+              ],
+              "id": "bb8bab9b-89ab-4cde-b012-318b0b2a84ef",
+              "properties": {
+                "conjunction": "OR"
+              },
+              "type": "group"
+            },
+            "whereString": "sessionid = 111"
+          },
+          "table": "mqtt_consumer"
+        }
+      ],
+      "title": "Altitude",
+      "transformations": [
+        {
+          "id": "prepareTimeSeries",
+          "options": {
+            "format": "multi"
+          }
+        }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "e2a0d58b-4f41-4b3d-8217-b53923ac3d4c"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "axisSoftMax": 6,
+            "axisSoftMin": 0,
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 6,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "line"
+            }
+          },
+          "decimals": 2,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 44
+      },
+      "id": 4,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "10.1.4",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "e2a0d58b-4f41-4b3d-8217-b53923ac3d4c"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT \"time\", device, speed FROM mqtt_consumer WHERE sessionid = $getSessionIds ",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [
+                  {
+                    "name": "\"time\"",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              },
+              {
+                "parameters": [
+                  {
+                    "name": "device",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              },
+              {
+                "parameters": [
+                  {
+                    "name": "latitude",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              }
+            ],
+            "groupBy": [],
+            "limit": 50,
+            "whereJsonTree": {
+              "children1": [
+                {
+                  "id": "a8b9bbb9-cdef-4012-b456-718b0b766ce6",
+                  "properties": {
+                    "field": "sessionid",
+                    "operator": "equal",
+                    "value": [
+                      111
+                    ],
+                    "valueSrc": [
+                      "value"
+                    ],
+                    "valueType": [
+                      "number"
+                    ]
+                  },
+                  "type": "rule"
+                }
+              ],
+              "id": "bb8bab9b-89ab-4cde-b012-318b0b2a84ef",
+              "properties": {
+                "conjunction": "OR"
+              },
+              "type": "group"
+            },
+            "whereString": "sessionid = 111"
+          },
+          "table": "mqtt_consumer"
+        }
+      ],
+      "title": "Speed",
+      "transformations": [
+        {
+          "id": "prepareTimeSeries",
+          "options": {
+            "format": "multi"
+          }
+        }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "e2a0d58b-4f41-4b3d-8217-b53923ac3d4c"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "axisSoftMax": 6,
+            "axisSoftMin": 0,
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 6,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "line"
+            }
+          },
+          "decimals": 2,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 44
+      },
+      "id": 6,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "10.1.4",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "e2a0d58b-4f41-4b3d-8217-b53923ac3d4c"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT \"time\", device, satellites FROM mqtt_consumer WHERE sessionid = $getSessionIds ",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [
+                  {
+                    "name": "\"time\"",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              },
+              {
+                "parameters": [
+                  {
+                    "name": "device",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              },
+              {
+                "parameters": [
+                  {
+                    "name": "latitude",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              }
+            ],
+            "groupBy": [],
+            "limit": 50,
+            "whereJsonTree": {
+              "children1": [
+                {
+                  "id": "a8b9bbb9-cdef-4012-b456-718b0b766ce6",
+                  "properties": {
+                    "field": "sessionid",
+                    "operator": "equal",
+                    "value": [
+                      111
+                    ],
+                    "valueSrc": [
+                      "value"
+                    ],
+                    "valueType": [
+                      "number"
+                    ]
+                  },
+                  "type": "rule"
+                }
+              ],
+              "id": "bb8bab9b-89ab-4cde-b012-318b0b2a84ef",
+              "properties": {
+                "conjunction": "OR"
+              },
+              "type": "group"
+            },
+            "whereString": "sessionid = 111"
+          },
+          "table": "mqtt_consumer"
+        }
+      ],
+      "title": "Satellites",
+      "transformations": [
+        {
+          "id": "prepareTimeSeries",
+          "options": {
+            "format": "multi"
+          }
+        }
+      ],
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 39,
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "94:B9:7E:13:BF:EB",
+          "value": "94:B9:7E:13:BF:EB"
+        },
+        "datasource": {
+          "type": "postgres",
+          "uid": "e2a0d58b-4f41-4b3d-8217-b53923ac3d4c"
+        },
+        "definition": "SELECT DISTINCT device FROM mqtt_consumer;\n",
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "getDevices",
+        "options": [],
+        "query": "SELECT DISTINCT device FROM mqtt_consumer;\n",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "",
+          "value": ""
+        },
+        "datasource": {
+          "type": "postgres",
+          "uid": "e2a0d58b-4f41-4b3d-8217-b53923ac3d4c"
+        },
+        "definition": "SELECT DISTINCT sessionid FROM mqtt_consumer \norder by sessionid desc;",
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "getSessionIds",
+        "options": [],
+        "query": "SELECT DISTINCT sessionid FROM mqtt_consumer \norder by sessionid desc;",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "2023-10-07T18:43:34.387Z",
+    "to": "2023-10-07T18:45:40.777Z"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Historical Sessions",
+  "uid": "f1f6c4e2-a800-4ec9-9e31-12f6aad14ace",
+  "version": 24,
+  "weekStart": ""
+}
