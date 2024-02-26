@@ -12,11 +12,11 @@ class Algorithm:
         decoded_message = json.loads(message)
 
         if mac_pattern.match(decoded_message.get("device")):
-            self.df = self.df.append(decoded_message, ignore_index=True)  # Add a new measurement to the DataFrame
+            self.df = self.df.append(decoded_message, ignore_index=True)
 
-        if len(self.df) >= 10:  # Process when DataFrame has 10 or more measurements
+        if len(self.df) >= 10:
             if all(key in self.df.columns for key in ['latitude', 'longitude', 'speed', 'altitude', 'satellites', 'time', 'sessionid', 'device']):
-                # Check deviation and remove faulty devices
+
                 self.check_deviation()
 
                 latitude_values = self.df['latitude'].tolist()
@@ -26,13 +26,13 @@ class Algorithm:
 
                 result_json = {
                     "device": "Algorithm",
-                    "latitude": smoothed_latitude[-1],  # Use the latest smoothed value
-                    "longitude": smoothed_longitude[-1],  # Use the latest smoothed value
+                    "latitude": smoothed_latitude[-1],
+                    "longitude": smoothed_longitude[-1],
                     "speed": self.df['speed'].mean(),
                     "altitude": self.df['altitude'].mean(),
                     "satellites": self.df['satellites'].max(),
                     "time": self.df['time'].max(),
-                    "sessionid": self.df['sessionid'].iloc[0]  # Use the sessionid from the first measurement
+                    "sessionid": self.df['sessionid'].iloc[0]
                 }
 
                 self.mqtt_handler.publish("gps/metric", json.dumps(result_json))
@@ -40,16 +40,16 @@ class Algorithm:
                 self.df = pd.DataFrame(columns=['latitude', 'longitude', 'speed', 'altitude', 'satellites', 'time', 'sessionid', 'device'])
 
     def check_deviation(self):
-        # Calculate mean latitude and longitude
+
         mean_latitude = self.df['latitude'].mean()
         mean_longitude = self.df['longitude'].mean()
 
-        # Calculate deviation for each device
+
         for device, group in self.df.groupby('device'):
             device_latitude_deviation = abs(group['latitude'].mean() - mean_latitude)
             device_longitude_deviation = abs(group['longitude'].mean() - mean_longitude)
 
-            # If deviation is too large, remove the device from DataFrame and send faulted message
+
             if device_latitude_deviation > 0.005 or device_longitude_deviation > 0.005:
                 self.df = self.df[self.df['device'] != device]  # Remove faulty device from DataFrame
                 self.mqtt_handler.publish("gps/faulted", device)

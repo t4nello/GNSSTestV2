@@ -6,8 +6,10 @@ from session_manager import SessionManager
 from algorithm import Algorithm
 
 config_manager = ConfigManager("config.json")
+id = "gnssSerializer"
 
-mqtt_handler = mqtt.Client()
+mqtt_handler = mqtt.Client(id)
+
 session_manager = SessionManager(mqtt_handler, config_manager)
 
 algorithm_instance = Algorithm(mqtt_handler)
