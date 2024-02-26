@@ -6,8 +6,10 @@ from session_manager import SessionManager
 from algorithm import Algorithm
 
 config_manager = ConfigManager("config.json")
+id = "gnssSerializer"
 
-mqtt_handler = mqtt.Client()
+mqtt_handler = mqtt.Client(id)
+
 session_manager = SessionManager(mqtt_handler, config_manager)
 
 algorithm_instance = Algorithm(mqtt_handler)
@@ -17,6 +19,6 @@ gps_handler = GpsMetricHandler(mqtt_handler, config_manager, session_manager, al
 mqtt_handler.on_connect = gps_handler.on_connect
 mqtt_handler.on_message = gps_handler.on_message
 
-mqtt_handler.connect("192.168.0.123", 1883)
+mqtt_handler.connect("192.168.0.213", 1883)
 
 mqtt_handler.loop_forever()
