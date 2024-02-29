@@ -111,6 +111,7 @@ void setup() {
   ss.begin(GPSBaud);
   Serial.begin(baudRate);
   WiFi.begin(ssid, pass);
+  client.setWill("esp/connection/disconnected",WiFi.macAddress().c_str());
   client.begin("192.168.0.213", net);
   connect();
 }
@@ -121,6 +122,7 @@ void loop() {
   delay(10);
   client.onMessage(messageReceived);
   if (!client.connected()) {
+
     connect();
   }
   while (ss.available() > 0)

@@ -1,65 +1,47 @@
 import json
-import re
-import pandas as pd
-
+from datetime import datetime
+from collections import defaultdict
+import  re
 class Algorithm:
-    def __init__(self, mqtt_handler):
-        self.df = pd.DataFrame(columns=['latitude', 'longitude', 'speed', 'altitude', 'satellites', 'time', 'sessionid', 'device'])
+    def __init__(self, mqtt_handler,session_manger):
+        self.window_data = defaultdict(list)
         self.mqtt_handler = mqtt_handler
+        self.session_manager = session_manger
+        self.device_count = {}
 
-    def process_message(self, message):
+    def is_mac_address(self, address):
         mac_pattern = re.compile(r'^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$')
-        decoded_message = json.loads(message)
+        return bool(mac_pattern.match(address))
 
-        if mac_pattern.match(decoded_message.get("device")):
-            self.df = self.df.append(decoded_message, ignore_index=True)
-
-        if len(self.df) >= 10:
-            if all(key in self.df.columns for key in ['latitude', 'longitude', 'speed', 'altitude', 'satellites', 'time', 'sessionid', 'device']):
-
-                self.check_deviation()
-
-                latitude_values = self.df['latitude'].tolist()
-                longitude_values = self.df['longitude'].tolist()
-                smoothed_latitude = self.calculate_dynamic_ma(latitude_values)
-                smoothed_longitude = self.calculate_dynamic_ma(longitude_values)
-
-                result_json = {
-                    "device": "Algorithm",
-                    "latitude": smoothed_latitude[-1],
-                    "longitude": smoothed_longitude[-1],
-                    "speed": self.df['speed'].mean(),
-                    "altitude": self.df['altitude'].mean(),
-                    "satellites": self.df['satellites'].max(),
-                    "time": self.df['time'].max(),
-                    "sessionid": self.df['sessionid'].iloc[0]
-                }
-
-                self.mqtt_handler.publish("gps/metric", json.dumps(result_json))
-                print(result_json)
-                self.df = pd.DataFrame(columns=['latitude', 'longitude', 'speed', 'altitude', 'satellites', 'time', 'sessionid', 'device'])
-
-    def check_deviation(self):
-
-        mean_latitude = self.df['latitude'].mean()
-        mean_longitude = self.df['longitude'].mean()
-
-
-        for device, group in self.df.groupby('device'):
-            device_latitude_deviation = abs(group['latitude'].mean() - mean_latitude)
-            device_longitude_deviation = abs(group['longitude'].mean() - mean_longitude)
-
-
-            if device_latitude_deviation > 0.005 or device_longitude_deviation > 0.005:
-                self.df = self.df[self.df['device'] != device]  # Remove faulty device from DataFrame
-                self.mqtt_handler.publish("gps/faulted", device)
-                print(f"Faulty device detected: {device}")
-
-    def calculate_dynamic_ma(self, data):
-        window_size = min(10, len(data))
+    def process_message(self, msg):
         try:
-            rolling_mean = pd.to_numeric(data, errors='coerce').rolling(window=window_size, min_periods=1).mean()
+            device_data = json.loads(msg)
+            device = device_data["device"]
+            latitude = device_data["latitude"]
+            longitude = device_data["longitude"]
+            speed = device_data["speed"]
+            altitude = device_data["altitude"]
+            satellites = device_data["satellites"]
+            time = datetime.fromtimestamp(device_data["time"])
+            sessionid = device_data["sessionid"]
+
+            if self.is_mac_address(device):
+                # Dodaj lub aktualizuj liczbę wystąpień urządzenia
+                self.device_count[device] = self.device_count.get(device, 0) + 1
+            else:
+                print("Niepoprawny adres MAC:", device)
+
+
+            print("Liczba unikalnych adresów MAC:", len(self.device_count))
+
         except Exception as e:
-            print(f"Error calculating rolling mean: {e}")
-            rolling_mean = pd.Series(data)
-        return rolling_mean.tolist()
+            print("Error:", str(e))
+
+    def device_disconnected(self, device):
+        disconnected_device = self.session_manager.disconnect_handler("esp/connection/disconnected",device)
+        if disconnected_device:
+            # Sprawdzenie czy odłączone urządzenie jest w device_count
+            if disconnected_device in self.device_count:
+                del self.device_count[disconnected_device]
+                print(
+                    f"Urządzenie {disconnected_device} zostało odłączone. Aktualizacja liczby unikalnych adresów MAC.")
