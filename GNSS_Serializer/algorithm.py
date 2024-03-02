@@ -10,6 +10,8 @@ class Algorithm:
         self.device_count = {}
         self.received_measurements = defaultdict(set)
         self.ready_to_process = False
+        self.max_deviation_threshold = 0.00003  # Threshold for maximum deviation
+        self.excluded_devices = set()  # Set to store devices currently excluded from average calculations
 
     def process_message(self, msg):
         try:
@@ -33,18 +35,33 @@ class Algorithm:
                     "satellites": satellites,
                     "time": time,
                     "sessionid": sessionid
-
                 })
+
+                self.check_device_deviation(device)
                 self.add_last_latitude_values()
                 self.add_last_longitude_values()
                 self.display_average_values()
-            else:
-                print("Niepoprawny adres MAC:", device)
 
-            print("Liczba unikalnych adresów MAC:", len(self.device_count))
+
 
         except Exception as e:
             print("Error:", str(e))
+
+    def check_device_deviation(self, device):
+        if len(self.window_data[device]) >= 6:
+            last_four_latitudes = [data["latitude"] for data in self.window_data[device][-4:]]
+            last_four_longitudes = [data["longitude"] for data in self.window_data[device][-4:]]
+            latitude_deviation = max(last_four_latitudes) - min(last_four_latitudes)
+            longitude_deviation = max(last_four_longitudes) - min(last_four_longitudes)
+
+            if latitude_deviation > self.max_deviation_threshold or longitude_deviation > self.max_deviation_threshold:
+                print(f"Ostrzeżenie: Odchylenie dla urządzenia {device} jest zbyt duże.")
+                self.mqtt_handler.publish("gps/algorithm/faulted", device)
+                self.excluded_devices.add(device)
+            elif device in self.excluded_devices:
+                print(f"Urządzenie {device} wróciło do normy.")
+                self.mqtt_handler.publish("gps/algorithm/operative", device )
+                self.excluded_devices.remove(device)
 
     def device_disconnected(self, device):
         disconnected_device = self.session_manager.disconnect_handler("esp/connection/disconnected", device)
@@ -68,7 +85,7 @@ class Algorithm:
             if not data or not (
                     first_device_time - timedelta(seconds=3) <= data[-1]["time"] <= first_device_time + timedelta(
                     seconds=3)):
-                print("Czas ostatnich pomiarów nie jest taki sam dla wszystkich urządzeń z tolerancją 3 sekund.")
+
                 return
 
         # Dodaj ostatnie wartości latitude dla każdego urządzenia
@@ -83,49 +100,47 @@ class Algorithm:
             print("Brak danych do przetworzenia.")
             return
 
-        # Pobierz czas (time) pierwszego urządzenia
         first_device_time = None
         for device, data in self.window_data.items():
             if data:
                 first_device_time = data[-1]["time"]
                 break
 
-        # Sprawdź, czy wszystkie urządzenia mają ten sam czas z tolerancją 3 sekund
         for device, data in self.window_data.items():
             if not data or not (
                     first_device_time - timedelta(seconds=3) <= data[-1]["time"] <= first_device_time + timedelta(
                 seconds=3)):
-                print("Czas ostatnich pomiarów nie jest taki sam dla wszystkich urządzeń z tolerancją 3 sekund.")
+
                 return
 
-        # Dodaj ostatnie wartości latitude dla każdego urządzenia
         last_longitude_values = {}
         for device, data in self.window_data.items():
             last_longitude_values[device] = data[-1]["longitude"]
         self.ready_to_process = True
 
     def display_average_values(self):
-        print(self.ready_to_process)
-        if not self.ready_to_process:
-            print("Dane nie są jeszcze gotowe do przetworzenia.")
-            return
-
-        self.ready_to_process = False
-
         if not self.window_data:
             print("Brak danych do przetworzenia.")
             return
 
         last_latitude_values = []
         last_longitude_values = []
-
         for device, data in self.window_data.items():
-            if data:
+            if data and device not in self.excluded_devices:
                 last_latitude_values.append(data[-1]["latitude"])
                 last_longitude_values.append(data[-1]["longitude"])
-        self.send_gps_metric_data()
 
-    def send_gps_metric_data(self):
+        if not last_latitude_values or not last_longitude_values:
+            print("Brak danych do przetworzenia.")
+            return
+
+
+        avg_latitude = sum(last_latitude_values) / len(last_latitude_values)
+        avg_longitude = sum(last_longitude_values) / len(last_longitude_values)
+
+        self.send_gps_metric_data(avg_latitude, avg_longitude)
+
+    def send_gps_metric_data(self,avg_latitude, avg_longitude):
         if not self.window_data:
             print("Brak danych do przetworzenia.")
             return
