@@ -33,7 +33,7 @@ class GpsMetricHandler:
             self.session_manager.disable_session()
 
     def check_connection(self, topic, message):
-        if topic == "esp/connection/connected" and self.session_manager.is_session_enabled():
+        if topic == "esp/connection/connected" and self.session_manager.is_session_enabled() and self.session_manager.is_mac_address(message):
             out_message = f"device {message} wants to reconnect, proceed?"
             self.mqtt_client.publish("esp/connection/reconnect/allow", out_message)
 

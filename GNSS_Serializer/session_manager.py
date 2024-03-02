@@ -1,4 +1,5 @@
 import json
+import re
 
 class SessionManager:
     def __init__(self, mqtt_handler, config_manager):
@@ -45,3 +46,7 @@ class SessionManager:
             self.mqtt_handler.publish(topic, payload)
         else:
             self.mqtt_handler.publish(topic)
+
+    def is_mac_address(self, address):
+        mac_pattern = re.compile(r'^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$')
+        return bool(mac_pattern.match(address))

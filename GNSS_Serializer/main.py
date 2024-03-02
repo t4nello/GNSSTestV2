@@ -9,7 +9,7 @@ def main():
     id = "gnssSerializer"
     mqtt_handler = mqtt.Client(id)
     session_manager = SessionManager(mqtt_handler, config_manager)
-    algorithm_instance = Algorithm(mqtt_handler,session_manager)
+    algorithm_instance = Algorithm(mqtt_handler, session_manager)
     gps_handler = GpsMetricHandler(mqtt_handler, config_manager, session_manager, algorithm_instance)
 
     mqtt_handler.on_connect = gps_handler.on_connect
