@@ -1,5 +1,3 @@
-# config_manager.py
-
 import json
 
 class ConfigManager:
@@ -16,8 +14,7 @@ class ConfigManager:
                         "session_number": 1233,
                         "session_status": "stopped",
                     }
-                    with open(self.config_file, 'w') as new_file:
-                        json.dump(default_config, new_file)
+                    self.save_config(default_config)
                     return default_config
                 else:
                     return json.loads(data)
@@ -26,10 +23,9 @@ class ConfigManager:
                 "session_number": 1,
                 "session_status": "stopped",
             }
-            with open(self.config_file, 'w') as new_file:
-                json.dump(default_config, new_file)
+            self.save_config(default_config)
             return default_config
 
-    def save_config(self):
+    def save_config(self, config_data):
         with open(self.config_file, 'w') as file:
-            json.dump(self.config, file)
+            json.dump(config_data, file)
