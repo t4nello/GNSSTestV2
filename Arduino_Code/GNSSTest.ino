@@ -128,7 +128,7 @@ void loop() {
   while (ss.available() > 0)
     if (gps.encode(ss.read()))
     if (gps.location.isValid() && enableGps == true ){
-      if (millis() - lastMillis > 3000) {
+      if (millis() - lastMillis > 7000) {
           publishInfo();
 
           lastMillis = millis();
