@@ -10,8 +10,8 @@ class Algorithm:
         self.device_count = {}
         self.received_measurements = defaultdict(set)
         self.ready_to_process = False
-        self.max_deviation_threshold = 0.00003  # Threshold for maximum deviation
-        self.excluded_devices = set()  # Set to store devices currently excluded from average calculations
+        self.max_deviation_threshold = 0.000003
+        self.excluded_devices = set()
 
     def process_message(self, msg):
         try:
@@ -36,16 +36,48 @@ class Algorithm:
                     "time": time,
                     "sessionid": sessionid
                 })
+                self.add_last_coordinates()
+            else:
+                print("Niepoprawny adres MAC:", device)
 
-                self.check_device_deviation(device)
-                self.add_last_latitude_values()
-                self.add_last_longitude_values()
-                self.display_average_values()
-
-
+            print("Liczba unikalnych adresów MAC:", len(self.device_count))
 
         except Exception as e:
             print("Error:", str(e))
+
+    def device_disconnected(self, device):
+        disconnected_device = self.session_manager.disconnect_handler("esp/connection/disconnected", device)
+        if disconnected_device:
+            if disconnected_device in self.device_count:
+                del self.device_count[disconnected_device]
+
+    def add_last_coordinates(self):
+        if not self.window_data:
+            print("Brak danych do przetworzenia.")
+            return
+
+        first_device_time = None
+        for device, data in self.window_data.items():
+            if data:
+                first_device_time = data[-1]["time"]
+                break
+
+        for device, data in self.window_data.items():
+            if not data or not (
+                    first_device_time - timedelta(seconds=3) <= data[-1]["time"] <= first_device_time + timedelta(
+                    seconds=2)):
+                print("Czas ostatnich pomiarów nie jest taki sam dla wszystkich urządzeń z tolerancją 3 sekund.")
+                return
+
+        last_coordinates = defaultdict(dict)
+        for device, data in self.window_data.items():
+            if data:
+                last_coordinates[device]["latitude"] = data[-1]["latitude"]
+                last_coordinates[device]["longitude"] = data[-1]["longitude"]
+
+        self.ready_to_process = True
+        self.calculate_average_coordinates(last_coordinates)
+        self.check_device_deviation(device)
 
     def check_device_deviation(self, device):
         if len(self.window_data[device]) >= 6:
@@ -55,98 +87,36 @@ class Algorithm:
             longitude_deviation = max(last_four_longitudes) - min(last_four_longitudes)
 
             if latitude_deviation > self.max_deviation_threshold or longitude_deviation > self.max_deviation_threshold:
-                print(f"Ostrzeżenie: Odchylenie dla urządzenia {device} jest zbyt duże.")
                 self.mqtt_handler.publish("gps/algorithm/faulted", device)
                 self.excluded_devices.add(device)
+
+
             elif device in self.excluded_devices:
-                print(f"Urządzenie {device} wróciło do normy.")
-                self.mqtt_handler.publish("gps/algorithm/operative", device )
+                self.mqtt_handler.publish("gps/algorithm/operative", device)
                 self.excluded_devices.remove(device)
 
-    def device_disconnected(self, device):
-        disconnected_device = self.session_manager.disconnect_handler("esp/connection/disconnected", device)
-        if disconnected_device:
-            if disconnected_device in self.device_count:
-                del self.device_count[disconnected_device]
-
-    def add_last_latitude_values(self):
-        if not self.window_data:
+    def calculate_average_coordinates(self, last_coordinates):
+        if not last_coordinates:
             print("Brak danych do przetworzenia.")
             return
 
+        valid_coordinates = [(coords["latitude"], coords["longitude"]) for device, coords in last_coordinates.items() if
+                             device not in self.excluded_devices and coords]
 
-        first_device_time = None
-        for device, data in self.window_data.items():
-            if data:
-                first_device_time = data[-1]["time"]
-                break
-
-        for device, data in self.window_data.items():
-            if not data or not (
-                    first_device_time - timedelta(seconds=3) <= data[-1]["time"] <= first_device_time + timedelta(
-                    seconds=3)):
-
-                return
-
-        # Dodaj ostatnie wartości latitude dla każdego urządzenia
-        last_latitude_values = {}
-        for device, data in self.window_data.items():
-            last_latitude_values[device] = data[-1]["latitude"]
-        self.ready_to_process = True
-
-    def add_last_longitude_values(self):
-        # Sprawdź, czy istnieją dane do przetworzenia
-        if not self.window_data:
+        if not valid_coordinates:
             print("Brak danych do przetworzenia.")
             return
 
-        first_device_time = None
-        for device, data in self.window_data.items():
-            if data:
-                first_device_time = data[-1]["time"]
-                break
-
-        for device, data in self.window_data.items():
-            if not data or not (
-                    first_device_time - timedelta(seconds=3) <= data[-1]["time"] <= first_device_time + timedelta(
-                seconds=3)):
-
-                return
-
-        last_longitude_values = {}
-        for device, data in self.window_data.items():
-            last_longitude_values[device] = data[-1]["longitude"]
-        self.ready_to_process = True
-
-    def display_average_values(self):
-        if not self.window_data:
-            print("Brak danych do przetworzenia.")
-            return
-
-        last_latitude_values = []
-        last_longitude_values = []
-        for device, data in self.window_data.items():
-            if data and device not in self.excluded_devices:
-                last_latitude_values.append(data[-1]["latitude"])
-                last_longitude_values.append(data[-1]["longitude"])
-
-        if not last_latitude_values or not last_longitude_values:
-            print("Brak danych do przetworzenia.")
-            return
-
-
-        avg_latitude = sum(last_latitude_values) / len(last_latitude_values)
-        avg_longitude = sum(last_longitude_values) / len(last_longitude_values)
+        avg_latitude = sum(coord[0] for coord in valid_coordinates) / len(valid_coordinates)
+        avg_longitude = sum(coord[1] for coord in valid_coordinates) / len(valid_coordinates)
 
         self.send_gps_metric_data(avg_latitude, avg_longitude)
 
-    def send_gps_metric_data(self,avg_latitude, avg_longitude):
+    def send_gps_metric_data(self, avg_latitude, avg_longitude):
         if not self.window_data:
             print("Brak danych do przetworzenia.")
             return
 
-        last_latitude_values = []
-        last_longitude_values = []
         last_speed_values = []
         last_altitude_values = []
         last_satellites_values = []
@@ -155,8 +125,6 @@ class Algorithm:
 
         for device, data in self.window_data.items():
             if data:
-                last_latitude_values.append(data[-1]["latitude"])
-                last_longitude_values.append(data[-1]["longitude"])
                 last_speed_values.append(data[-1]["speed"])
                 last_altitude_values.append(data[-1]["altitude"])
                 last_satellites_values.append(data[-1]["satellites"])
@@ -165,8 +133,8 @@ class Algorithm:
 
         json_data = {
             "device": "Algorithm",
-            "latitude": round(sum(last_latitude_values) / len(last_latitude_values),7),
-            "longitude": round(sum(last_longitude_values) / len(last_longitude_values), 7),
+            "latitude": round(avg_latitude, 7),
+            "longitude": round(avg_longitude, 7),
             "speed": round(sum(last_speed_values) / len(last_speed_values), 2),
             "altitude": round(sum(last_altitude_values) / len(last_altitude_values), 2),
             "satellites": max(last_satellites_values),
