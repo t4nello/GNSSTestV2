@@ -83,30 +83,36 @@ class Algorithm:
 
     def check_device_deviation(self, last_coordinates):
         for device, coordinates in last_coordinates.items():
-            if len(self.window_data[device]) >= 4:
+            if len(self.window_data[device]) >= 8:
                 last_four_latitudes = [data["latitude"] for data in self.window_data[device][-8:]]
                 last_four_longitudes = [data["longitude"] for data in self.window_data[device][-8:]]
 
-                # Obliczanie odchylenia standardowego dla latitudy i longitudy
-                latitude_std = np.std(last_four_latitudes)
-                longitude_std = np.std(last_four_longitudes)
+                # Sprawdzenie, czy są dokładnie 8 pomiarów latitudy i longitudy
+                if len(last_four_latitudes) == 8 and len(last_four_longitudes) == 8:
+                    # Obliczanie odchylenia standardowego dla latitudy i longitudy
+                    latitude_std = np.std(last_four_latitudes)
+                    longitude_std = np.std(last_four_longitudes)
 
-                # Wyświetlanie odchylenia standardowego w notacji normalnej
-                print(f"Odchylenie standardowe dla urządzenia {device}:")
-                print("Latitude Std:", "{:.10f}".format(latitude_std))
-                print("Longitude Std:", "{:.10f}".format(longitude_std))
+                    # Wyświetlanie odchylenia standardowego w notacji normalnej
+                    print(f"Odchylenie standardowe dla urządzenia {device}:")
+                    print("Latitude Std:", "{:.10f}".format(latitude_std))
+                    print("Longitude Std:", "{:.10f}".format(longitude_std))
 
-                # Sprawdzenie, czy odchylenie standardowe przekracza próg
-                if latitude_std > self.max_deviation_threshold or longitude_std > self.max_deviation_threshold:
-                    self.mqtt_handler.publish("gps/algorithm/faulted", device)
-                    self.excluded_devices.add(device)
-                    print(f"dodane  {self.excluded_devices}")
-                    del self.window_data[device][-8:]
-                    print(self.window_data[device][-8:])
-                elif device in self.excluded_devices:
-                    self.mqtt_handler.publish("gps/algorithm/operative", device)
-                    self.excluded_devices.remove(device)
-                    print(f"usuniete {self.excluded_devices}")
+                    # Sprawdzenie, czy odchylenie standardowe przekracza próg
+                    if latitude_std > self.max_deviation_threshold or longitude_std > self.max_deviation_threshold:
+                        self.mqtt_handler.publish("gps/algorithm/faulted", device)
+                        self.excluded_devices.add(device)
+                        print(f"dodane  {self.excluded_devices}")
+
+                        # Usuwanie danych urządzenia z last_four_latitudes i last_four_longitudes
+                        del self.window_data[device][-8:]
+
+                    elif device in self.excluded_devices:
+                        self.mqtt_handler.publish("gps/algorithm/operative", device)
+                        self.excluded_devices.remove(device)
+                        print(f"usuniete {self.excluded_devices}")
+                else:
+                    print(f"Za mało pomiarów dla urządzenia {device}")
 
     def calculate_average_coordinates(self, last_coordinates):
         if not last_coordinates:
