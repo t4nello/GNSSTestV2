@@ -1,6 +1,7 @@
 import json
 from collections import defaultdict
 from datetime import datetime, timedelta
+import numpy as np
 
 class Algorithm:
     def __init__(self, mqtt_handler, session_manager):
@@ -10,7 +11,7 @@ class Algorithm:
         self.device_count = {}
         self.received_measurements = defaultdict(set)
         self.ready_to_process = False
-        self.max_deviation_threshold = 0.000003
+        self.max_deviation_threshold = 0.00003
         self.excluded_devices = set()
 
     def process_message(self, msg):
@@ -37,10 +38,6 @@ class Algorithm:
                     "sessionid": sessionid
                 })
                 self.add_last_coordinates()
-            else:
-                print("Niepoprawny adres MAC:", device)
-
-            print("Liczba unikalnych adresów MAC:", len(self.device_count))
 
         except Exception as e:
             print("Error:", str(e))
@@ -64,9 +61,8 @@ class Algorithm:
 
         for device, data in self.window_data.items():
             if not data or not (
-                    first_device_time - timedelta(seconds=3) <= data[-1]["time"] <= first_device_time + timedelta(
-                    seconds=2)):
-                print("Czas ostatnich pomiarów nie jest taki sam dla wszystkich urządzeń z tolerancją 3 sekund.")
+                    first_device_time - timedelta(seconds=3) <= data[-1]["time"] <= first_device_time +
+                    timedelta(seconds=3)):
                 return
 
         last_coordinates = defaultdict(dict)
@@ -76,24 +72,41 @@ class Algorithm:
                 last_coordinates[device]["longitude"] = data[-1]["longitude"]
 
         self.ready_to_process = True
+        #print("last cords")
+        #for device, coordinates in last_coordinates.items():
+        #    print(f"Device: {device}, Latitude: {coordinates['latitude']}")
+        #    print(f"Device: {device}, Longitude: {coordinates['longitude']}")
+        self.check_device_deviation(last_coordinates)
         self.calculate_average_coordinates(last_coordinates)
-        self.check_device_deviation(device)
 
-    def check_device_deviation(self, device):
-        if len(self.window_data[device]) >= 6:
-            last_four_latitudes = [data["latitude"] for data in self.window_data[device][-4:]]
-            last_four_longitudes = [data["longitude"] for data in self.window_data[device][-4:]]
-            latitude_deviation = max(last_four_latitudes) - min(last_four_latitudes)
-            longitude_deviation = max(last_four_longitudes) - min(last_four_longitudes)
+    import numpy as np
 
-            if latitude_deviation > self.max_deviation_threshold or longitude_deviation > self.max_deviation_threshold:
-                self.mqtt_handler.publish("gps/algorithm/faulted", device)
-                self.excluded_devices.add(device)
+    def check_device_deviation(self, last_coordinates):
+        for device, coordinates in last_coordinates.items():
+            if len(self.window_data[device]) >= 4:
+                last_four_latitudes = [data["latitude"] for data in self.window_data[device][-8:]]
+                last_four_longitudes = [data["longitude"] for data in self.window_data[device][-8:]]
 
+                # Obliczanie odchylenia standardowego dla latitudy i longitudy
+                latitude_std = np.std(last_four_latitudes)
+                longitude_std = np.std(last_four_longitudes)
 
-            elif device in self.excluded_devices:
-                self.mqtt_handler.publish("gps/algorithm/operative", device)
-                self.excluded_devices.remove(device)
+                # Wyświetlanie odchylenia standardowego w notacji normalnej
+                print(f"Odchylenie standardowe dla urządzenia {device}:")
+                print("Latitude Std:", "{:.10f}".format(latitude_std))
+                print("Longitude Std:", "{:.10f}".format(longitude_std))
+
+                # Sprawdzenie, czy odchylenie standardowe przekracza próg
+                if latitude_std > self.max_deviation_threshold or longitude_std > self.max_deviation_threshold:
+                    self.mqtt_handler.publish("gps/algorithm/faulted", device)
+                    self.excluded_devices.add(device)
+                    print(f"dodane  {self.excluded_devices}")
+                    del self.window_data[device][-8:]
+                    print(self.window_data[device][-8:])
+                elif device in self.excluded_devices:
+                    self.mqtt_handler.publish("gps/algorithm/operative", device)
+                    self.excluded_devices.remove(device)
+                    print(f"usuniete {self.excluded_devices}")
 
     def calculate_average_coordinates(self, last_coordinates):
         if not last_coordinates:
