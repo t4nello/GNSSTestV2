@@ -20,8 +20,7 @@ class MeasurandApi:
         average_longitude = round(total_longitude / count, 6)
 
         average_position = (average_latitude, average_longitude)
-        return self.convert_lat_lon_to_utm([average_position])
-        #return average_position
+        return average_position
 
     def most_frequent_position(self, sessionid):
         values = self.postgres_manager.get_position_for_session(sessionid)
@@ -31,7 +30,7 @@ class MeasurandApi:
         positions_list = [(entry["latitude"], entry["longitude"]) for entry in values]
         most_common_position = mode(positions_list)
         return self.convert_lat_lon_to_utm([most_common_position])
-        #return most_common_position
+        return most_common_position
 
     def convert_lat_lon_to_utm(self, positions):
         transformer = Transformer.from_crs("EPSG:4326", "EPSG:32633")
@@ -44,21 +43,28 @@ class MeasurandApi:
 
     from statistics import stdev
 
-    def calculate_sigma(self, sessionid, reference_type):
+    def calculate_sigma(self, sessionid, reference):
         values = self.postgres_manager.get_position_for_session(sessionid)
         if not values:
             return None
 
-        # Wybierz referencyjną wartość
-        if reference_type == 'avg':
-            reference_position = self.calculate_average_position(sessionid)
-           
-        elif reference_type == 'mode':
-            reference_position = self.most_frequent_position(sessionid)
+        # Sprawdź, czy referencja jest podana jako współrzędne
+        if ',' in reference:
+            reference_position = tuple(map(float, reference.split(',')))
+            reference_position = self.convert_lat_lon_to_utm([reference_position])
         else:
-            raise ValueError("Nieprawidłowy typ referencji. Dostępne opcje: 'avg' lub 'mode'.")
-        if reference_position is None:
-            return {"error": "Brak danych referencyjnych"}
+            # Wybierz referencyjną wartość
+            if reference == 'avg':
+                reference_position = self.calculate_average_position(sessionid)
+                reference_position = self.convert_lat_lon_to_utm([reference_position])
+            elif reference == 'mode':
+                reference_position = self.most_frequent_position(sessionid)
+                reference_position = self.convert_lat_lon_to_utm([reference_position])
+            else:
+                raise ValueError("Nieprawidłowy typ referencji. Dostępne opcje: 'avg' lub 'mode'.")
+
+            if reference_position is None:
+                return {"error": "Brak danych referencyjnych"}
 
         # Grupowanie pomiarów według urządzeń
         measurements_by_device = {}
