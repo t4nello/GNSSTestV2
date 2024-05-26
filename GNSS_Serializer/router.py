@@ -1,9 +1,14 @@
 from flask import Flask, jsonify, request, g
 
 class Router:
+<<<<<<< HEAD
     def __init__(self, postgres_manager, measurand_api):
         self.postgres_manager = postgres_manager
         self.measurand_api = measurand_api(self.postgres_manager)
+=======
+    def __init__(self, postgres_manager):
+        self.postgres_manager = postgres_manager
+>>>>>>> origin/master
 
     def configure_routes(self, app):
         @app.route('/api/sessions', methods=['GET'])
@@ -40,6 +45,7 @@ class Router:
         def get_devices_per_session(session):
             unique_devices = self.postgres_manager.get_unique_devices_per_session(session)
             return jsonify({"devices": unique_devices})
+<<<<<<< HEAD
 
         @app.route('/api/avg/<sessionid>', methods=['GET'])
         def get_average_values(sessionid):
@@ -100,3 +106,5 @@ class Router:
                     return jsonify({"error": "No position data available for this session."}), 404
             except ValueError as e:
                 return jsonify({"error": str(e)}), 400
+=======
+>>>>>>> origin/master

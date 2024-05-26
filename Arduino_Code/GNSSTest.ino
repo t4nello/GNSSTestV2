@@ -6,8 +6,8 @@
 #include <ArduinoJson.h>
 #include <TimeLib.h>
 
-#undef  MQTT_MAX_PACKET_SIZE
-#define MQTT_MAX_PACKET_SIZE 500
+#undef  MQTT_MAX_PACKET_SIZE 
+#define MQTT_MAX_PACKET_SIZE 500 
 #define RxPin 4
 #define txPin 5
 #define baudRate 115200
@@ -47,8 +47,9 @@ int SessionId=0;
 void messageReceived(String &topic, String &payload) {
 
   if (topic.compareTo("esp/detect") == 0 && payload.compareTo(WiFi.macAddress()) == 0) {
-
-    digitalWrite(LED_BUILTIN, HIGH);
+     digitalWrite(LED_BUILTIN, LOW);
+     delay(100);
+     digitalWrite(LED_BUILTIN, HIGH);    
   } else if (topic.compareTo("gps/metric/enable") == 0) {
     SessionId = payload.toInt();
     if (SessionId == 0){
@@ -56,8 +57,8 @@ void messageReceived(String &topic, String &payload) {
     }
     else
     enableGps = true;
-
-
+    
+   
   } else if (topic.compareTo("gps/metric/disable") == 0) {
     enableGps = false;
   }
@@ -73,9 +74,9 @@ long convertGPSDateTime() {
         int minute = gps.time.minute();
         int second = gps.time.second();
 
-
+       
         tmElements_t tm;
-        tm.Year = year - 1970;
+        tm.Year = year - 1970; 
         tm.Month = month;
         tm.Day = day;
         tm.Hour = hour;
@@ -85,24 +86,28 @@ long convertGPSDateTime() {
      return timestamp;
 }
 
-void publishInfo()
-{
-String dateString = String(gps.date.value());
-String timeString = String(gps.time.value());
-long datetime = convertGPSDateTime();
-StaticJsonDocument<1024> doc;
-doc["device"] = WiFi.macAddress();
-doc["latitude"] = gps.location.lat();
-doc["longitude"] = gps.location.lng();
-doc["speed"] = gps.speed.kmph();
-doc["altitude"] = gps.altitude.meters();
-doc["satellites"] = gps.satellites.value();
-doc["time"] = datetime;
-doc["sessionid"] = SessionId;
- String jsonStr;
-  serializeJson(doc, jsonStr);
+void publishInfo() {
+    float latitude = gps.location.lat();
+    float longitude = gps.location.lng();
 
-  client.publish("gps/metric", jsonStr);
+    char latitudeBuffer[16];
+    char longitudeBuffer[16];
+    dtostrf(latitude, 8, 6, latitudeBuffer);
+    dtostrf(longitude, 8, 6, longitudeBuffer);
+    StaticJsonDocument<1024> doc;
+    doc["device"] = WiFi.macAddress();
+    doc["latitude"] = atof(latitudeBuffer); 
+    doc["longitude"] = atof(longitudeBuffer); 
+    doc["speed"] = gps.speed.kmph();
+    doc["altitude"] = gps.altitude.meters();
+    doc["satellites"] = gps.satellites.value();
+    doc["time"] = convertGPSDateTime();
+    doc["sessionid"] = SessionId;
+
+    String jsonStr;
+    serializeJson(doc, jsonStr);
+
+    client.publish("gps/metric", jsonStr.c_str());
 }
 
 void setup() {
@@ -122,7 +127,7 @@ void loop() {
   delay(10);
   client.onMessage(messageReceived);
   if (!client.connected()) {
-
+  
     connect();
   }
   while (ss.available() > 0)
@@ -130,9 +135,9 @@ void loop() {
     if (gps.location.isValid() && enableGps == true ){
       if (millis() - lastMillis > 7000) {
           publishInfo();
-
+        
           lastMillis = millis();
-
+         
     }
   }
 }
