@@ -1,7 +1,7 @@
 import threading
 import paho.mqtt.client as mqtt
 from flask import Flask
-from DatabaseManager import PostgresDBManager
+from database_manager import PostgresDBManager
 from gps_metric_handler import GpsMetricHandler
 from config_manager import ConfigManager
 from session_manager import SessionManager
