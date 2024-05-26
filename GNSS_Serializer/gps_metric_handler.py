@@ -2,6 +2,7 @@ import json
 import paho.mqtt.client as mqtt
 import time
 
+
 class GpsMetricHandler:
     def __init__(self, mqtt_client, config_manager, session_manager, algorithm):
         self.mqtt_client = mqtt_client
@@ -13,6 +14,9 @@ class GpsMetricHandler:
         print(f"Connected with result code {rc}")
         self.mqtt_client.subscribe("gps/+")
         self.mqtt_client.subscribe("esp/connection/+")
+        self.mqtt_client.subscribe("gps/algorithm/threshold")
+        self.mqtt_client.message_callback_add("gps/algorithm/threshold", self.handle_threshold_message)
+
 
     def on_message(self, client, userdata, msg):
         topic = msg.topic
@@ -40,3 +44,8 @@ class GpsMetricHandler:
     def enable_algorithm(self, topic, message):
         if topic == "gps/metric" and self.session_manager.is_session_enabled():
             self.algorithm.process_message(message)
+    
+    def handle_threshold_message(self, client, userdata, msg):
+        if msg.topic == "gps/algorithm/threshold":
+            threshold = float(msg.payload.decode("utf-8"))
+            self.algorithm.on_threshold_received(threshold)

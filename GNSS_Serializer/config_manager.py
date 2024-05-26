@@ -11,7 +11,7 @@ class ConfigManager:
                 data = file.read()
                 if not data:
                     default_config = {
-                        "session_number": 1233,
+                        "session_number": 1,
                         "session_status": "stopped",
                     }
                     self.save_config(default_config)
