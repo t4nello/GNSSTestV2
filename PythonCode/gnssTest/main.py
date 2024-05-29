@@ -32,7 +32,7 @@ def flask_run(config):
     app.run(host=config["flask"]["host"], port=config["flask"]["port"])
 
 def main():
-    config_path = os.path.expanduser("~/gnsstest/config.json")
+    config_path = os.path.expanduser("/home/rpi4/GNSSTestV2/PythonCode/gnssTest/config.json")
     with open(config_path, "r") as f:
         config = json.load(f)
 
