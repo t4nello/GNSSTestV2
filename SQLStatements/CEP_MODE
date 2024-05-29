@@ -8,12 +8,12 @@ WITH measurements AS (
         mqtt_consumer
     WHERE
         sessionid = 42
-        AND device IN ('58:BF:25:DA:15:49', '94:B9:7E:13:BF:EB', '00:1E:42:2B:9C:13')
+        AND device IN (SELECT DISTINCT device FROM mqtt_consumer WHERE sessionid = 2268)
 ),
 reference_data AS (
     SELECT
-        AVG(latitude::numeric) AS avg_latitude,
-        AVG(longitude::numeric) AS avg_longitude
+         MODE() WITHIN GROUP (ORDER BY latitude) AS modal_latitude,
+        MODE() WITHIN GROUP (ORDER BY longitude) AS modal_longitude
     FROM
         mqtt_consumer
     WHERE
@@ -22,9 +22,6 @@ reference_data AS (
 converted_measurements AS (
     SELECT
         device,
-        ST_Transform(
-            ST_SetSRID(ST_MakePoint(longitude, latitude), 4326),
-            32633) AS utm_measurements_point,
         ST_X(
             ST_Transform(
                 ST_SetSRID(ST_MakePoint(longitude, latitude), 4326),
@@ -38,24 +35,21 @@ converted_measurements AS (
 ),
 converted_reference_data AS (
     SELECT
-        ST_Transform(
-            ST_SetSRID(ST_MakePoint(avg_longitude, avg_latitude), 4326),
-            32633) AS utm_reference_point,
         ST_X(
             ST_Transform(
-                ST_SetSRID(ST_MakePoint(avg_longitude, avg_latitude), 4326),
+                ST_SetSRID(ST_MakePoint(modal_longitude, modal_latitude), 4326),
                 32633)) AS utm_reference_x,
         ST_Y(
             ST_Transform(
-                ST_SetSRID(ST_MakePoint(avg_longitude, avg_latitude), 4326),
+                ST_SetSRID(ST_MakePoint(modal_longitude, modal_latitude), 4326),
                 32633)) AS utm_reference_y
     FROM
         reference_data
 )
 SELECT
     device,
-    SQRT(AVG(POWER(CAST(utm_measurements_x AS numeric) - utm_reference_x, 2))) AS sigma_x,
-    SQRT(AVG(POWER(CAST(utm_measurements_y AS numeric) - utm_reference_y, 2))) AS sigma_y,
+   /* SQRT(AVG(POWER(CAST(utm_measurements_x AS numeric) - utm_reference_x, 2))) AS sigma_x,
+    SQRT(AVG(POWER(CAST(utm_measurements_y AS numeric) - utm_reference_y, 2))) AS sigma_y, */
     0.62 * SQRT(AVG(POWER(CAST(utm_measurements_x AS numeric) - utm_reference_x, 2))) + 0.56 * SQRT(AVG(POWER(CAST(utm_measurements_y AS numeric) - utm_reference_y, 2))) AS cep_radius,
     2 * (SQRT(AVG(POWER(CAST(utm_measurements_x AS numeric) - utm_reference_x, 2))) + SQRT(AVG(POWER(CAST(utm_measurements_y AS numeric) - utm_reference_y, 2)))) AS twodrms_radius
 FROM

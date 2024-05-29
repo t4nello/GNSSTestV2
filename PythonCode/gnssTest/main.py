@@ -1,3 +1,4 @@
+import os
 import threading
 import paho.mqtt.client as mqtt
 from flask import Flask
@@ -8,10 +9,11 @@ from session_manager import SessionManager
 from algorithm import Algorithm
 from router import Router
 from measurands_api import MeasurandApi
+import json
 
-def mqtt_loop():
-    mqtt_handler = mqtt.Client("gnssSerializer")
-    config_manager = ConfigManager("config.json")
+def mqtt_loop(config):
+    mqtt_handler = mqtt.Client(config["mqtt"]["client_name"])
+    config_manager = ConfigManager("session_data.json")
     session_manager = SessionManager(mqtt_handler, config_manager)
     algorithm_instance = Algorithm(mqtt_handler, session_manager)
     gps_handler = GpsMetricHandler(mqtt_handler, config_manager, session_manager, algorithm_instance)
@@ -19,19 +21,23 @@ def mqtt_loop():
     mqtt_handler.on_connect = gps_handler.on_connect
     mqtt_handler.on_message = gps_handler.on_message
 
-    mqtt_handler.connect("localhost", 1883)
+    mqtt_handler.connect(config["mqtt"]["host"], config["mqtt"]["port"])
     mqtt_handler.loop_forever()
 
-def flask_run():
-    router = Router(PostgresDBManager("host=localhost user=postgres password=admin123 dbname=tsdb"),MeasurandApi)
+def flask_run(config):
+    router = Router(PostgresDBManager(" ".join([f"{key}={value}" for key, value in config["database"].items()])), MeasurandApi)
     app = Flask(__name__)
     router.configure_routes(app)
     app.config['JSON_SORT_KEYS'] = False
-    app.run(host='0.0.0.0', port=5000)
-   
+    app.run(host=config["flask"]["host"], port=config["flask"]["port"])
+
 def main():
-    mqtt_thread = threading.Thread(target=mqtt_loop)
-    flask_thread = threading.Thread(target=flask_run)
+    config_path = os.path.expanduser("~/gnsstest/config.json")
+    with open(config_path, "r") as f:
+        config = json.load(f)
+
+    mqtt_thread = threading.Thread(target=mqtt_loop, args=(config,))
+    flask_thread = threading.Thread(target=flask_run, args=(config,))
 
     mqtt_thread.start()
     flask_thread.start()

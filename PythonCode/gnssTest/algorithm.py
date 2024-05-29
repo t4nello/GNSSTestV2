@@ -136,9 +136,9 @@ class Algorithm:
         if len(self.latitude_window_avg_array) >= len(valid_coordinates):
             # Smoothing data using Savitzky-Golay filter
             smoothed_latitude_sg = savgol_filter(self.latitude_window_avg_array, window_length=len(valid_coordinates),
-                                                 polyorder=len(valid_coordinates) - 1)
+                                                 polyorder=2)
             smoothed_longitude_sg = savgol_filter(self.longitude_window_avg_array, window_length=len(valid_coordinates),
-                                                  polyorder=len(valid_coordinates) - 1)
+                                                  polyorder=2)
 
             # Calculate average coordinates after smoothing
             avg_latitude = sum(smoothed_latitude_sg) / len(smoothed_latitude_sg)
@@ -180,5 +180,5 @@ class Algorithm:
             "sessionid": max(last_sessionid_values)
         }
 
-        json_result = json.dumps(json_data, indent=2)
+        json_result = json.dumps(json_data)
         self.mqtt_handler.publish("gps/metric", json_result)
