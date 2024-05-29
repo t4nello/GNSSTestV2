@@ -1,0 +1,17 @@
+{
+    "mqtt": {
+        "host": "localhost",
+        "port": 1883,
+        "client_name": "GnssManager"
+    },
+    "database": {
+        "host": "localhost",
+        "user": "postgres",
+        "password": "admin123",
+        "dbname": "tsdb"
+    },
+    "flask": {
+        "host": "0.0.0.0",
+        "port": 5000
+    }
+}
