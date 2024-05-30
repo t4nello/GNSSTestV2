@@ -1,7 +1,7 @@
 import psycopg2
-from flask import Flask, jsonify, g
+from flask import g
 
-class PostgresDBManager:
+class DataProcessor:
     def __init__(self, connection_string):
         self.connection_string = connection_string
 

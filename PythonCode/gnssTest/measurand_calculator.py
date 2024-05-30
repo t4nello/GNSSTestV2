@@ -1,9 +1,8 @@
 from statistics import mode, stdev
 from pyproj import Proj, Transformer
 import math
-class MeasurandApi:
+class MeasurandCalculator:
 
-    
     def __init__(self, postgres_manager):
         self.postgres_manager = postgres_manager
       
@@ -29,7 +28,6 @@ class MeasurandApi:
 
         positions_list = [(entry["latitude"], entry["longitude"]) for entry in values]
         most_common_position = mode(positions_list)
-        return self.convert_lat_lon_to_utm([most_common_position])
         return most_common_position
 
     def convert_lat_lon_to_utm(self, positions):

@@ -1,31 +1,20 @@
 import os
 import threading
-import paho.mqtt.client as mqtt
 from flask import Flask
-from data_api import PostgresDBManager
-from gps_metric_handler import GpsMetricHandler
-from config_manager import ConfigManager
-from session_manager import SessionManager
-from algorithm import Algorithm
+from mqtt_manager import MqttManager
+from data_processor import DataProcessor
 from router import Router
-from measurands_api import MeasurandApi
+from measurand_calculator import MeasurandCalculator
 import json
 
 def mqtt_loop(config):
-    mqtt_handler = mqtt.Client(config["mqtt"]["client_name"])
-    config_manager = ConfigManager("session_data.json")
-    session_manager = SessionManager(mqtt_handler, config_manager)
-    algorithm_instance = Algorithm(mqtt_handler, session_manager)
-    gps_handler = GpsMetricHandler(mqtt_handler, config_manager, session_manager, algorithm_instance)
-
-    mqtt_handler.on_connect = gps_handler.on_connect
-    mqtt_handler.on_message = gps_handler.on_message
-
-    mqtt_handler.connect(config["mqtt"]["host"], config["mqtt"]["port"])
-    mqtt_handler.loop_forever()
+    mqtt_manager = MqttManager(config["mqtt"]["clientId"])
+    mqtt_manager.connect(config["mqtt"]["host"], config["mqtt"]["port"])
+    mqtt_manager.client.on_connect = mqtt_manager.on_connect
+    mqtt_manager.loop_forever()
 
 def flask_run(config):
-    router = Router(PostgresDBManager(" ".join([f"{key}={value}" for key, value in config["database"].items()])), MeasurandApi)
+    router = Router(DataProcessor(" ".join([f"{key}={value}" for key, value in config["database"].items()])), MeasurandCalculator)
     app = Flask(__name__)
     router.configure_routes(app)
     app.config['JSON_SORT_KEYS'] = False

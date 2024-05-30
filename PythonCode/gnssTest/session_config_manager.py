@@ -1,6 +1,6 @@
 import json
 
-class ConfigManager:
+class SessionConfigManager:
     def __init__(self, config_file):
         self.config_file = config_file
         self.config = self.load_config()
@@ -11,8 +11,8 @@ class ConfigManager:
                 data = file.read()
                 if not data:
                     default_config = {
-                        "session_number": 1,
-                        "session_status": "stopped",
+                        "sessionId": 0,
+                        "status": "stopped",
                     }
                     self.save_config(default_config)
                     return default_config
@@ -20,8 +20,8 @@ class ConfigManager:
                     return json.loads(data)
         except FileNotFoundError:
             default_config = {
-                "session_number": 1,
-                "session_status": "stopped",
+                "sessionId": 0,
+                "status": "stopped",
             }
             self.save_config(default_config)
             return default_config
