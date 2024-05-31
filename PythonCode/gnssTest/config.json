@@ -2,7 +2,7 @@
     "mqtt": {
         "host": "localhost",
         "port": 1883,
-        "client_name": "GnssManager"
+        "clientId": "GNSSManager"
     },
     "database": {
         "host": "localhost",
