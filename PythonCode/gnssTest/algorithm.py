@@ -4,8 +4,9 @@ from datetime import datetime, timedelta
 import numpy as np
 from scipy.signal import savgol_filter
 
+
 class Algorithm:
-    def __init__(self, mqtt_handler, session_manager, window_size=5):
+    def __init__(self, mqtt_handler, session_manager):
         # Initialize data structures and parameters
         self.window_data = defaultdict(list)  # Store data for each device
         self.mqtt_handler = mqtt_handler  # MQTT handler object
@@ -15,13 +16,12 @@ class Algorithm:
         self.ready_to_process = False  # Flag indicating if data is ready for processing
         self.max_deviation_threshold = 0.000055  # Maximum deviation threshold
         self.excluded_devices = set()  # Set of excluded devices
-        self.window_size = window_size  # Size of the processing window
         self.latitude_window_avg_array = []  # Array to store latitude window averages
         self.longitude_window_avg_array = []  # Array to store longitude window averages
-    def process_message(self, msg):
-        try:
+    def process_message(self, message):
+       # try:
             # Process incoming message
-            device_data = json.loads(msg)
+            device_data = json.loads(message)
             device = device_data["device"]
             latitude = device_data["latitude"]
             longitude = device_data["longitude"]
@@ -45,18 +45,30 @@ class Algorithm:
                 })
                 self.add_last_coordinates()  # Check if data is ready for processing
 
-        except Exception as e:
-            print("Error:", str(e))
+     #   except Exception as e:
+      #      print("Error:", str(e))
         
-    def on_threshold_received(self, threshold):
-        self.max_deviation_threshold = threshold
+    def on_threshold_received(self, client, userdata, message):
+        try:
+            threshold = float(message.payload.decode("utf-8"))
+            self.max_deviation_threshold = threshold
+        except ValueError as ve:
+            print(f"Error processing threshold: {ve}")
+            self.max_deviation_threshold = 0.000055
+        
+    
+    def disconnected_device_handler(self, client, userdata, message):
+        device_id = message.payload.decode("utf-8")
+        if device_id in self.window_data:
+            del self.window_data[device_id]
+            if device_id in self.device_count:
+                del self.device_count[device_id]
+            if device_id in self.excluded_devices:
+                self.excluded_devices.remove(device_id)
+            print(f"Device {device_id} disconnected. Stopped processing data from this device.")
+        else:
+            print(f"Unknown device: {device_id}.")
 
-    def device_disconnected(self, device):
-        # Handle device disconnection
-        disconnected_device = self.session_manager.disconnect_handler("esp/connection/disconnected", device)
-        if disconnected_device:
-            if disconnected_device in self.device_count:
-                del self.device_count[disconnected_device]
 
     def add_last_coordinates(self):
         # Add last coordinates to the processing window
@@ -136,9 +148,9 @@ class Algorithm:
         if len(self.latitude_window_avg_array) >= len(valid_coordinates):
             # Smoothing data using Savitzky-Golay filter
             smoothed_latitude_sg = savgol_filter(self.latitude_window_avg_array, window_length=len(valid_coordinates),
-                                                 polyorder=2)
+                                                polyorder= len(valid_coordinates)-1)
             smoothed_longitude_sg = savgol_filter(self.longitude_window_avg_array, window_length=len(valid_coordinates),
-                                                  polyorder=2)
+                                                  polyorder= len(valid_coordinates)-1)
 
             # Calculate average coordinates after smoothing
             avg_latitude = sum(smoothed_latitude_sg) / len(smoothed_latitude_sg)

@@ -4,6 +4,7 @@ class Router:
     def __init__(self, postgres_manager, measurand_api):
         self.postgres_manager = postgres_manager
         self.measurand_api = measurand_api(self.postgres_manager)
+        self.valid_fields = ["latitude", "longitude", "position", "speed", "satellites", "altitude"]
 
     def configure_routes(self, app):
         @app.route('/api/sessions', methods=['GET'])
@@ -16,10 +17,9 @@ class Router:
             unique_devices = self.postgres_manager.get_unique_devices()
             return jsonify({"devices": unique_devices})
 
-        @app.route('/api/<device>/<field>/<sessionid>', methods=['GET'])
+        @app.route('/api/data/<sessionid>/<device>/<field>', methods=['GET'])
         def get_data(device, field, sessionid):
-            valid_fields = ["latitude", "longitude", "position", "speed", "satellites", "altitude"]
-            if field not in valid_fields:
+            if field not in self.valid_fields:
                     return jsonify({"error": "Invalid field"}), 400
             if device == "all":
                 if field == "position":
@@ -31,15 +31,28 @@ class Router:
                     data = self.postgres_manager.get_position_for_device(device, sessionid)
                 else: 
                     data = self.postgres_manager.get_measurand_for_session(device, field ,sessionid)
-            if data is not None:
+            if data:
                 return jsonify(data)
             else:
-                return jsonify({"error": "Invalid request or missing data"}), 400  
+                return jsonify({"error": "Missing data"}), 404  
 
-        @app.route('/api/<session>/devices', methods=['GET'])
+        @app.route('/api/count/<session>/<field>', methods=['GET'])
+        def get_field_counts_per_session(session,field):
+            if field not in self.valid_fields:
+                    return jsonify({"error": "Invalid field"}), 400
+            unique_devices = self.postgres_manager.get_field_count(session, field)
+            if unique_devices:
+                return jsonify(unique_devices)
+            else:
+                return jsonify({"error": "No average position data available for this session."}), 404
+
+        @app.route('/api/devices/<session>', methods=['GET'])
         def get_devices_per_session(session):
             unique_devices = self.postgres_manager.get_unique_devices_per_session(session)
-            return jsonify({"devices": unique_devices})
+            if unique_devices:
+                return jsonify(unique_devices)
+            else:
+                return jsonify({"error": "No average position data available for this session."}), 404
 
         @app.route('/api/avg/<sessionid>', methods=['GET'])
         def get_average_values(sessionid):
