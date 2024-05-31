@@ -39,19 +39,15 @@ class MeasurandCalculator:
             utm_coordinates.append((round(utm_x, 6), round(utm_y, 6)))
         return utm_coordinates
 
-    from statistics import stdev
-
     def calculate_sigma(self, sessionid, reference):
         values = self.postgres_manager.get_position_for_session(sessionid)
         if not values:
             return None
-
-        # Sprawdź, czy referencja jest podana jako współrzędne
+        
         if ',' in reference:
             reference_position = tuple(map(float, reference.split(',')))
             reference_position = self.convert_lat_lon_to_utm([reference_position])
         else:
-            # Wybierz referencyjną wartość
             if reference == 'avg':
                 reference_position = self.calculate_average_position(sessionid)
                 reference_position = self.convert_lat_lon_to_utm([reference_position])
@@ -62,9 +58,8 @@ class MeasurandCalculator:
                 raise ValueError("Nieprawidłowy typ referencji. Dostępne opcje: 'avg' lub 'mode'.")
 
             if reference_position is None:
-                return {"error": "Brak danych referencyjnych"}
+                return None
 
-        # Grupowanie pomiarów według urządzeń
         measurements_by_device = {}
         for entry in values:
             device = entry["device"]
@@ -84,7 +79,7 @@ class MeasurandCalculator:
     def calculate_drms(self, sessionid, reference_type):
         sigma_values = self.calculate_sigma(sessionid, reference_type)
         if sigma_values is None:
-            return {"error": "Brak danych sigmy"}
+            return None
 
         drms_values = {}
         for device, sigma in sigma_values.items():
@@ -96,7 +91,7 @@ class MeasurandCalculator:
     def calculate_2drms(self, sessionid, reference_type):
         drms_values = self.calculate_drms(sessionid, reference_type)
         if drms_values is None:
-            return {"error": "Brak danych DRMS"}
+            return None
 
         drms_2x_values = {}
         for device, drms in drms_values.items():
@@ -107,7 +102,7 @@ class MeasurandCalculator:
     def calculate_cep(self, sessionid, reference_type):
         sigma_values = self.calculate_sigma(sessionid, reference_type)
         if sigma_values is None:
-            return {"error": "Brak danych sigmy"}
+            return None
 
         cep_values = {}
         for device, sigma in sigma_values.items():

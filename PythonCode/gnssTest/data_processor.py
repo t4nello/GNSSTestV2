@@ -24,7 +24,6 @@ class DataProcessor:
                     session_ids = [row[0] for row in cursor.fetchall()]
                     return session_ids
         except psycopg2.Error as error:
-            print("Error fetching unique session IDs:", error)
             return []
 
     def get_unique_devices(self):
@@ -36,7 +35,6 @@ class DataProcessor:
                     devices = [row[0] for row in cursor.fetchall()]
                     return devices
         except psycopg2.Error as error:
-            print("Error fetching unique devices:", error)
             return []
 
     def get_position_for_session(self, sessionid):
@@ -48,7 +46,6 @@ class DataProcessor:
                     data = [{"device": row[0], "time": row[1], "latitude": row[2], "longitude": row[3]} for row in cursor.fetchall()]
                     return data
         except psycopg2.Error as error:
-            print("Error fetching latitude and longitude for session:", error)
             return []
 
 
@@ -61,7 +58,6 @@ class DataProcessor:
                     data = [{"time": row[0], "latitude": row[1], "longitude": row[2]} for row in cursor.fetchall()]
                     return data
         except psycopg2.Error as error:
-            print("Error fetching latitude and longitude for device:", error)
             return []
 
 
@@ -74,7 +70,6 @@ class DataProcessor:
                     data = [{"device": row[0], "time": row[1], "measurand": row[2]} for row in cursor.fetchall()]
                     return data
         except psycopg2.Error as error:
-            print("Error fetching measurand for session:", error)
             return []
 
      
@@ -87,7 +82,6 @@ class DataProcessor:
                     data = [{"time": row[0], "measurand": row[1]} for row in cursor.fetchall()]
                     return data
         except psycopg2.Error as error:
-            print("Error fetching measurand for device:", error)
             return []
 
 
@@ -100,10 +94,9 @@ class DataProcessor:
                     devices = [row[0] for row in cursor.fetchall()]
                     return devices
         except psycopg2.Error as error:
-            print("Error fetching unique devices:", error)
             return []
 
-    def get_field_counts(self, sessionid, field):
+    def get_field_count(self, sessionid, field):
         try:
             with self.get_connection() as conn:
                 with conn.cursor() as cursor:
