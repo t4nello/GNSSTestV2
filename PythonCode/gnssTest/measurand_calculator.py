@@ -1,11 +1,12 @@
-from statistics import mode, stdev
+from statistics import mode
 from pyproj import Proj, Transformer
 import math
+
 class MeasurandCalculator:
 
     def __init__(self, postgres_manager):
         self.postgres_manager = postgres_manager
-      
+
     def calculate_average_position(self, sessionid):
         values = self.postgres_manager.get_position_for_session(sessionid)
         if not values:
@@ -110,5 +111,3 @@ class MeasurandCalculator:
             cep = 0.652 * sigma_north + 0.56 * sigma_east
             cep_values[device] = round(cep, 2)
         return cep_values
-
-
