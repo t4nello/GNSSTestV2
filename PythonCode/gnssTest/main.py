@@ -1,35 +1,31 @@
-import os
-import threading
 from flask import Flask
-from mqtt_manager import MqttManager
-from data_processor import DataProcessor
 from router import Router
+from data_processor import DataProcessor
+from mqtt_manager import MqttManager
+from session_config_manager import SessionConfigManager
 from measurand_calculator import MeasurandCalculator
 import json
+import os
 
-def mqtt_loop(config):
-    mqtt_manager = MqttManager(config["mqtt"]["clientId"])
-    mqtt_manager.connect(config["mqtt"]["host"], config["mqtt"]["port"])
-    mqtt_manager.client.on_connect = mqtt_manager.on_connect
-    mqtt_manager.loop_forever()
+class Main:
+    def __init__(self):
+        self.app = Flask(__name__)
+        self.setup_dependencies()
+        self.setup_data_processor()
+        self.router = Router(app=self.app, mqtt_manager=self.mqtt_manager, config_manager=self.config_manager, data_processor=self.data_processor, measurand_calculator=MeasurandCalculator)
 
-def flask_run(config):
-    router = Router(DataProcessor(" ".join([f"{key}={value}" for key, value in config["database"].items()])), MeasurandCalculator)
-    app = Flask(__name__)
-    router.configure_routes(app)
-    app.config['JSON_SORT_KEYS'] = False
-    app.run(host=config["flask"]["host"], port=config["flask"]["port"])
+    def setup_dependencies(self):
+        self.mqtt_manager = MqttManager(self.app)
+        self.config_manager = SessionConfigManager("config.json")
 
-def main():
-    config_path = os.path.expanduser("/home/rpi4/GNSSTestV2/PythonCode/gnssTest/config.json")
-    with open(config_path, "r") as f:
-        config = json.load(f)
+    def setup_data_processor(self):
+        config_path = os.path.expanduser("/home/rpi4/GNSSTestV2/PythonCode/gnssTest/config.json")
+        with open(config_path, "r") as f:
+            config = json.load(f)
+        connection_string = " ".join([f"{key}={value}" for key, value in config["database"].items()])
+        self.data_processor = DataProcessor(connection_string)
 
-    mqtt_thread = threading.Thread(target=mqtt_loop, args=(config,))
-    flask_thread = threading.Thread(target=flask_run, args=(config,))
 
-    mqtt_thread.start()
-    flask_thread.start()
-
-if __name__ == "__main__":
-    main()
+if __name__ == '__main__':
+    main_app = Main()
+    main_app.app.run(debug=True)
