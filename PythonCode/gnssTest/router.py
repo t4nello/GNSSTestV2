@@ -1,13 +1,16 @@
-from flask import jsonify
+from flask import jsonify, request
 from session_manager import SessionManager
+from algorithm import Algorithm
 
 class Router:
-    def __init__(self, app, mqtt_manager, config_manager, data_processor, measurand_calculator):
+    def __init__(self, app, mqtt_manager, config_manager, data_processor, measurand_calculator,threshold_callback):
         self.app = app
         self.session_manager = SessionManager(mqtt_manager, config_manager)
         self.data_processor = data_processor
         self.measurand_calculator = measurand_calculator(self.data_processor)
         self.setup_routes()
+        self.threshold_callback = threshold_callback
+        self.algorithm = Algorithm()
         self.valid_fields = ["latitude", "longitude", "position", "speed", "satellites", "altitude"]
 
 
@@ -140,3 +143,16 @@ class Router:
                     return jsonify({"error": "No position data available for this session."}), 404
             except ValueError as e:
                 return jsonify({"error": str(e)}), 400
+        
+        @self.app.route('/api/alghoritm/threshold/set', methods=['POST'])
+        def get_threshold():
+            try:
+                threshold = request.json.get('threshold')
+                self.threshold_callback(threshold)
+                return jsonify({"message": "Threshold set successfully", "threshold": threshold}), 200
+            except ValueError as e:
+                return jsonify({"error": str(e)}), 400
+
+        @self.app.route('/api/algorithm/devices/faulted', methods=['GET'])
+        def get_faulted_devices(self):
+            return jsonify({"faulted_devices": list(self.algorithm.excluded_devices)})

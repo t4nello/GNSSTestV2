@@ -1,12 +1,11 @@
 import json
 import re
-import requests
 
 class SessionManager:
     def __init__(self, mqtt_manager, config_manager):
         self.mqtt_manager = mqtt_manager
         self.config_manager = config_manager
-        self.setup_mqtt()
+        #self.setup_mqtt()
 
     def enable_session(self):
         if self.get_session_status() == "stopped":
@@ -35,19 +34,7 @@ class SessionManager:
     def is_valid_mac(self, mac_address):
         mac_pattern = re.compile(r'^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$')
         return bool(mac_pattern.match(mac_address))
-    '''
-    def setup_mqtt(self):
-         @self.mqtt_manager.mqtt.on_topic('esp/connection/connected')
-         def handle_connection_topic(client, userdata, message):
-            decoded_address = message.payload.decode()
-            if self.is_valid_mac(decoded_address) :
-                response = requests.post("http://localhost:1880/reconnect/process", decoded_address)
-                if response.status_code == 200:
-                    self.mqtt_manager.publish_message("gps/metric/enable", self.config_manager.config.get("status"))
-                else: 
-                    return None
-                    '''
-                    
+    
 
 
 

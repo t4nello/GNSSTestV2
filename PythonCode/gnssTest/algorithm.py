@@ -6,11 +6,8 @@ from scipy.signal import savgol_filter
 
 
 class Algorithm:
-    def __init__(self, mqtt_handler, session_manager):
-        # Initialize data structures and parameters
+    def __init__(self):
         self.window_data = defaultdict(list)  # Store data for each device
-        self.mqtt_handler = mqtt_handler  # MQTT handler object
-        self.session_manager = session_manager  # Session manager object
         self.device_count = {}  # Count of messages received from each device
         self.received_measurements = defaultdict(set)  # Store received measurements
         self.ready_to_process = False  # Flag indicating if data is ready for processing
@@ -19,7 +16,7 @@ class Algorithm:
         self.latitude_window_avg_array = []  # Array to store latitude window averages
         self.longitude_window_avg_array = []  # Array to store longitude window averages
     def process_message(self, message):
-       # try:
+        try:
             # Process incoming message
             device_data = json.loads(message)
             device = device_data["device"]
@@ -45,13 +42,12 @@ class Algorithm:
                 })
                 self.add_last_coordinates()  # Check if data is ready for processing
 
-     #   except Exception as e:
-      #      print("Error:", str(e))
+        except Exception as e:
+            print("Error:", str(e))
         
-    def on_threshold_received(self, client, userdata, message):
+    def on_threshold_received(self, message):
         try:
-            threshold = float(message.payload.decode("utf-8"))
-            self.max_deviation_threshold = threshold
+            self.max_deviation_threshold = message
         except ValueError as ve:
             print(f"Error processing threshold: {ve}")
             self.max_deviation_threshold = 0.000055
@@ -115,13 +111,11 @@ class Algorithm:
 
                 # Sprawdzenie, czy odchylenie standardowe przekracza próg
                 if latitude_std > self.max_deviation_threshold or longitude_std > self.max_deviation_threshold:
-                    self.mqtt_handler.publish("gps/algorithm/faulted", device)
                     self.excluded_devices.add(device)
                     print(f"Dodane: {self.excluded_devices}")
                     self.window_data[device] = []
 
                 elif device in self.excluded_devices:
-                    self.mqtt_handler.publish("gps/algorithm/operative", device)
                     self.excluded_devices.remove(device)
                     print(f"Usunięte: {self.excluded_devices}")
             else:
