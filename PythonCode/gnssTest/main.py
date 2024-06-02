@@ -16,7 +16,7 @@ class Main:
 
     def setup_dependencies(self):
         self.mqtt_manager = MqttManager(self.app)
-        self.config_manager = SessionConfigManager("config.json")
+        self.config_manager = SessionConfigManager("sesison_config.json")
 
     def setup_data_processor(self):
         config_path = os.path.expanduser("/home/rpi4/GNSSTestV2/PythonCode/gnssTest/config.json")

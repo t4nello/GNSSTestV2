@@ -12,7 +12,7 @@ class Router:
 
 
     def setup_routes(self):
-        @self.app.route('/api/session/start')
+        @self.app.route('/api/session/start', methods=['POST'])
         def start_session():
             result = self.session_manager.enable_session()
             if isinstance(result, int):
@@ -20,18 +20,19 @@ class Router:
             else:
                 return jsonify({"error": result}), 400
 
-        @self.app.route('/api/session/stop')
+        @self.app.route('/api/session/stop', methods=['POST'])
         def stop_session():
             result = self.session_manager.disable_session()
-            if result == "Session stopped successfully":
+            if result == True:
                 return "OK", 200
             else:
-                return jsonify({"error": result}), 400
+                return jsonify({"error": "Session already Stopped"}), 400
 
-        @self.app.route('/api/session/status')
+        @self.app.route('/api/session/status',  methods=['GET'])
         def get_session_status():
-            result = self.session_manager.get_session_status()
-            jsonify({"error": result}), 200
+            status = self.session_manager.get_session_status()
+            return jsonify({"Status": status}), 200
+        
             
         @self.app.route('/api/sessions', methods=['GET'])
         def get_sessions():
