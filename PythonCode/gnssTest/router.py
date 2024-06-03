@@ -1,17 +1,24 @@
 from flask import jsonify, request
 from session_manager import SessionManager
 from algorithm import Algorithm
-
+import json
 class Router:
-    def __init__(self, app, mqtt_manager, config_manager, data_processor, measurand_calculator,threshold_callback):
+    def __init__(self, app, sockets, mqtt_manager, config_manager, data_processor, measurand_calculator, threshold_callback):
         self.app = app
+        self.mqtt_manager = mqtt_manager(app)
         self.session_manager = SessionManager(mqtt_manager, config_manager)
         self.data_processor = data_processor
+        self.sockets = sockets 
         self.measurand_calculator = measurand_calculator(self.data_processor)
         self.setup_routes()
         self.threshold_callback = threshold_callback
         self.algorithm = Algorithm()
         self.valid_fields = ["latitude", "longitude", "position", "speed", "satellites", "altitude"]
+        self.mqtt_manager.devices_changed.connect(self.send_updated_devices)
+
+    def send_updated_devices(self, sender, **kwargs):
+            connected_devices = self.mqtt_manager.get_connected_devices()
+            self.sockets.emit('connected_devices', {'data': connected_devices} )
 
 
     def setup_routes(self):
@@ -35,8 +42,8 @@ class Router:
         def get_session_status():
             status = self.session_manager.get_session_status()
             return jsonify({"Status": status}), 200
-        
-            
+
+       
         @self.app.route('/api/sessions', methods=['GET'])
         def get_sessions():
             unique_session_ids = self.data_processor.get_unique_session_ids()

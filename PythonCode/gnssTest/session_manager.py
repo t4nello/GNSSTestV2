@@ -5,7 +5,6 @@ class SessionManager:
     def __init__(self, mqtt_manager, config_manager):
         self.mqtt_manager = mqtt_manager
         self.config_manager = config_manager
-        #self.setup_mqtt()
 
     def enable_session(self):
         if self.get_session_status() == "stopped":
