@@ -21,7 +21,7 @@ class SessionManager:
     def disable_session(self):
         if self.get_session_status() == "started":
             self.config_manager.config["status"] = "stopped"
-            self.mqtt_manager.publish_message("gps/metric/disable", payload=None)
+            self.mqtt_manager.publish_message("gps/metric/disable") 
             self.config_manager.save_config(self.config_manager.config)
             return True
         else:
@@ -33,7 +33,3 @@ class SessionManager:
     def is_valid_mac(self, mac_address):
         mac_pattern = re.compile(r'^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$')
         return bool(mac_pattern.match(mac_address))
-    
-
-
-

@@ -5,7 +5,7 @@ import json
 class Router:
     def __init__(self, app, sockets, mqtt_manager, config_manager, data_processor, measurand_calculator, threshold_callback):
         self.app = app
-        self.mqtt_manager = mqtt_manager(app)
+        self.mqtt_manager = mqtt_manager
         self.session_manager = SessionManager(mqtt_manager, config_manager)
         self.data_processor = data_processor
         self.sockets = sockets 
@@ -14,12 +14,23 @@ class Router:
         self.threshold_callback = threshold_callback
         self.algorithm = Algorithm()
         self.valid_fields = ["latitude", "longitude", "position", "speed", "satellites", "altitude"]
-        self.mqtt_manager.devices_changed.connect(self.send_updated_devices)
+        self.mqtt_manager.device_connected.connect(self.send_connected_device)
+        self.mqtt_manager.device_disconnected.connect(self.send_disconnected_device)
 
-    def send_updated_devices(self, sender, **kwargs):
-            connected_devices = self.mqtt_manager.get_connected_devices()
-            self.sockets.emit('connected_devices', {'data': connected_devices} )
-
+    def send_connected_device(self, sender, **kwargs):
+        connected_device = kwargs.get('device')
+        self.sockets.emit('connected_device', connected_device)
+    
+    def send_disconnected_device(self, sender, **kwargs):
+        disconnected_device = kwargs.get('device')
+        self.sockets.emit('disconnected_device', disconnected_device)
+    
+    
+    def handle_locate_request(self, sender, **kwargs):
+        @self.sockets.on('detect_device')
+        def handle_locate(data):
+            self.mqtt_manager.detect_device(data)
+        
 
     def setup_routes(self):
         @self.app.route('/api/session/start', methods=['POST'])
