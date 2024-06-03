@@ -39,6 +39,5 @@ class MqttManager:
     def publish_message(self, topic, payload=None):  
         self.mqtt.publish(topic, payload)
 
-    @staticmethod
     def detect_device(address):
        Mqtt.publish("esp/detect", address)
