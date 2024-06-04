@@ -1,7 +1,9 @@
 from flask import jsonify, request
+from flask_sock import Sock
 from session_manager import SessionManager
 from algorithm import Algorithm
 import json
+
 class Router:
     def __init__(self, app, sockets, mqtt_manager, config_manager, data_processor, measurand_calculator, threshold_callback):
         self.app = app
@@ -10,29 +12,52 @@ class Router:
         self.data_processor = data_processor
         self.sockets = sockets 
         self.measurand_calculator = measurand_calculator(self.data_processor)
-        self.setup_routes()
         self.threshold_callback = threshold_callback
         self.algorithm = Algorithm()
         self.valid_fields = ["latitude", "longitude", "position", "speed", "satellites", "altitude"]
-        self.mqtt_manager.device_connected.connect(self.send_connected_device)
-        self.mqtt_manager.device_disconnected.connect(self.send_disconnected_device)
+        self.setup_routes()
+        self.setup_signal_handlers()
+
+    client_list = []
 
     def send_connected_device(self, sender, **kwargs):
         connected_device = kwargs.get('device')
-        self.sockets.emit('connected_device', connected_device)
-    
+        self.send_message_to_websocket({"connected_device": connected_device})
+
     def send_disconnected_device(self, sender, **kwargs):
         disconnected_device = kwargs.get('device')
-        self.sockets.emit('disconnected_device', disconnected_device)
+        self.send_message_to_websocket({"disconnected_device": disconnected_device})
+
+    def send_message_to_websocket(self, message):
+        for client in self.sockets.clients:
+            client.send(json.dumps(message))
+
+    def setup_signal_handlers(self):
+        self.mqtt_manager.device_connected.connect(self.send_connected_device)
+        self.mqtt_manager.device_disconnected.connect(self.send_disconnected_device)
     
-    
-    def handle_locate_request(self, sender, **kwargs):
-        @self.sockets.on('detect_device')
-        def handle_locate(data):
-            self.mqtt_manager.detect_device(data)
-        
+    def send_message_to_websocket(self, message):
+        clients = self.client_list.copy()
+        for client in clients:
+            client.send(json.dumps(message))
 
     def setup_routes(self):
+        @self.sockets.route('/api/connected_devices', websocket=True)
+        def handle_websocket(ws):
+            self.client_list.append(ws)
+            while True:
+                data = ws.receive()
+                ws.send(data)
+        
+        @self.app.route('/api/device/detect', methods=['POST'])
+        def detect_device():
+            try:
+                device = request.json.get('Connected device')
+                self.mqtt_manager.detect_device(device)
+                return jsonify({"message": "location request sent succesfully"}), 200
+            except ValueError as e:
+                return jsonify({"error": str(e)}), 400
+
         @self.app.route('/api/session/start', methods=['POST'])
         def start_session():
             result = self.session_manager.enable_session()

@@ -36,8 +36,8 @@ class MqttManager:
        self.device_disconnected.send(device=device)
        return device 
 
-    def publish_message(self, topic, payload=None):  
+    def publish_message(self, topic, payload):  
         self.mqtt.publish(topic, payload)
 
-    def detect_device(address):
-       Mqtt.publish("esp/detect", address)
+    def detect_device(self, address):
+       self.publish_message("esp/detect", address)

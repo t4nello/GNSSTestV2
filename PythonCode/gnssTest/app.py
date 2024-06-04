@@ -1,5 +1,5 @@
 from flask import Flask
-from flask_socketio import SocketIO
+from flask_sock import Sock
 from router import Router
 from data_processor import DataProcessor
 from mqtt_manager import MqttManager
@@ -11,9 +11,9 @@ import os
 
 
 app = Flask(__name__)
-sockets = SocketIO(app, cors_allowed_origins="*")
+sockets = Sock(app)
 algorithm_instance = Algorithm()
-
+app.config['SOCK_SERVER_OPTIONS'] = {'ping_interval': 10}
 config_manager = SessionConfigManager("session_config.json")
 config_path = os.path.expanduser("/home/rpi4/GNSSTestV2/PythonCode/gnssTest/config.json")
 
