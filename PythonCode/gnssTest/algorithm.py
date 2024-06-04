@@ -3,16 +3,17 @@ from collections import defaultdict
 from datetime import datetime, timedelta
 import numpy as np
 from scipy.signal import savgol_filter
-
+import re
 
 class Algorithm:
-    def __init__(self):
+    def __init__(self, mqtt_manager):
         self.window_data = defaultdict(list)  # Store data for each device
+        self.mqtt_manager  = mqtt_manager 
         self.device_count = {}  # Count of messages received from each device
         self.received_measurements = defaultdict(set)  # Store received measurements
         self.ready_to_process = False  # Flag indicating if data is ready for processing
         self.max_deviation_threshold = 0.000055  # Maximum deviation threshold
-        self.excluded_devices = set()  # Set of excluded devices
+        self.excluded_devices = set()
         self.latitude_window_avg_array = []  # Array to store latitude window averages
         self.longitude_window_avg_array = []  # Array to store longitude window averages
     def process_message(self, message):
@@ -28,7 +29,8 @@ class Algorithm:
             time = datetime.fromtimestamp(device_data["time"])
             sessionid = device_data["sessionid"]
 
-            if self.session_manager.is_mac_address(device):
+            mac_pattern = re.compile(r'^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$')
+            if re.match(mac_pattern, device):
                 # Update device count and window data
                 self.device_count[device] = self.device_count.get(device, 0) + 1
                 self.window_data[device].append({
@@ -187,4 +189,4 @@ class Algorithm:
         }
 
         json_result = json.dumps(json_data)
-        self.mqtt_handler.publish("gps/metric", json_result)
+        self.mqtt_manager.publish_message("gps/metric", json_result)

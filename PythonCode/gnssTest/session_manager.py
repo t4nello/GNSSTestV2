@@ -21,7 +21,7 @@ class SessionManager:
     def disable_session(self):
         if self.get_session_status() == "started":
             self.config_manager.config["status"] = "stopped"
-            self.mqtt_manager.publish_message("gps/metric/disable") 
+            self.mqtt_manager.publish_message("gps/metric/disable", '0') 
             self.config_manager.save_config(self.config_manager.config)
             return True
         else:

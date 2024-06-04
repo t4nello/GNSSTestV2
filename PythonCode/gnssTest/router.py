@@ -13,7 +13,6 @@ class Router:
         self.sockets = sockets 
         self.measurand_calculator = measurand_calculator(self.data_processor)
         self.threshold_callback = threshold_callback
-        self.algorithm = Algorithm()
         self.valid_fields = ["latitude", "longitude", "position", "speed", "satellites", "altitude"]
         self.setup_routes()
         self.setup_signal_handlers()
