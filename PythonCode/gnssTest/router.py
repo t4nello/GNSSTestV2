@@ -39,7 +39,10 @@ class Router:
     def send_message_to_websocket(self, message):
         clients = self.client_list.copy()
         for client in clients:
-            client.send(json.dumps(message))
+            try:
+                client.send(json.dumps(message))
+            except:
+                None
 
     def setup_routes(self):
         @self.sockets.route('/api/connected_devices', websocket=True)
