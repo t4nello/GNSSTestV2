@@ -1,44 +1,55 @@
-from session_manager import SessionManager
-from session_config_manager import SessionConfigManager
+from blinker import Signal
+from flask_mqtt import Mqtt
 from algorithm import Algorithm
-import paho.mqtt.client as mqtt
 
 class MqttManager:
-    def __init__(self, clientid):
-        self.client = mqtt.Client(clientid)
-        self.session_config_manager = SessionConfigManager("session_data.json")
-        self.session_manager = SessionManager(self, self.session_config_manager)
-        self.algoritm = Algorithm(MqttManager,SessionManager)
-    def connect(self, host, port):
-        self.client.connect(host, port)
+    device_connected = Signal()
+    device_disconnected = Signal()
+    
+    def __init__(self, app):
+        self.app = app
+        self.mqtt = Mqtt(self.app)
+        self.algoritm = Algorithm(MqttManager)
+        self.app.config['MQTT_CLIENT_ID'] = 'python'
+        self.app.config['MQTT_BROKER_URL'] = 'localhost'
+        self.app.config['MQTT_BROKER_PORT'] = 1883
+        self.setup_mqtt()
+    
+    def set_algorithm(self, algorithm):
+        self.algorithm = algorithm
+        self.setup_mqtt()
 
-    def on_connect(self, client, userdata, flags, rc):
-        print("Connected with result code "+str(rc))
-        topics_to_subscribe = [
-            "gps/#",
-            "esp/#"
-        ]
-        for topic in topics_to_subscribe:
-            self.client.subscribe(topic)
-        self.set_callback()
+    def setup_mqtt(self):
+        @self.mqtt.on_connect()
+        def handle_connect(client, userdata, flags, rc):
+            self.mqtt.subscribe('esp/#')
+            self.mqtt.subscribe('gps/#')
+        
+        @self.mqtt.on_topic('esp/connection/connected')
+        def handle_connected_device(client, userdata, message):
+            payload = message.payload.decode("utf-8")
+            self.connected_device(payload) 
 
-    def on_message(self, on_message_callback):
-        self.client.on_message = on_message_callback
+        @self.mqtt.on_topic('esp/connection/disconnected')
+        def handle_disconnected_device(client, userdata, message):
+            payload = message.payload.decode("utf-8")
+            self.disconnected_device(payload)  
+        
+        @self.mqtt.on_topic('gps/metric')
+        def pass_data_to_algorithm(client, userdata, message):
+            payload = message.payload.decode("utf-8")
+            self.algorithm.process_message(payload)
+            
+    def connected_device(self, device):
+        self.device_connected.send(device=device)
+        return device
+   
+    def disconnected_device(self, device):
+       self.device_disconnected.send(device=device)
+       return device 
 
-    def set_callback(self):
-        self.client.message_callback_add("gps/algorithm/threshold", self.algoritm.on_threshold_received)
-        self.client.message_callback_add("esp/connection/disconnected", self.algoritm.disconnected_device_handler)
-        self.client.message_callback_add("gps/metric", self.session_manager.enable_algorithm)
-        self.client.message_callback_add("esp/connection/reconnect", self.session_manager.reconnect_handler)
-        self.client.message_callback_add("gps/enable", self.session_manager.enable_session) 
-        self.client.message_callback_add("gps/disable", self.session_manager.disable_session) 
-        self.client.message_callback_add("esp/connection/connected", self.session_manager.process_reconnect_request_mid_session)
+    def publish_message(self, topic, payload):  
+        self.mqtt.publish(topic, payload)
 
-    def loop_forever(self):
-        self.client.loop_forever()
-
-    def subscribe(self, topic):
-        self.client.subscribe(topic)
-
-    def publish(self, topic, payload):
-        self.client.publish(topic, payload)
+    def detect_device(self, address):
+       self.publish_message("esp/detect", address)

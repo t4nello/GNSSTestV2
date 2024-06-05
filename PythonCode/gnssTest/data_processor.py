@@ -10,11 +10,6 @@ class DataProcessor:
             g.db = psycopg2.connect(self.connection_string)
         return g.db
 
-    def disconnect(self):
-        db = g.pop('db', None)
-        if db is not None:
-            db.close()
-
     def execute_query(self, query, params=None):
         try:
             with self.get_connection() as conn:
