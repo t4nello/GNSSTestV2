@@ -29,6 +29,7 @@ class Router:
 
     def send_message_to_websocket(self, message):
         for client in self.sockets.clients:
+            client.send("ping")
             client.send(json.dumps(message))
 
     def setup_signal_handlers(self):
