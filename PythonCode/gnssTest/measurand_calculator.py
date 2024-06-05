@@ -56,7 +56,7 @@ class MeasurandCalculator:
                  reference_position = self.most_frequent_position(sessionid)
                  reference_position = self.convert_lat_lon_to_utm([reference_position])
              else:
-                 raise ValueError("Nieprawidłowy typ referencji. Dostępne opcje: 'avg' lub 'mode'.")
+                 raise ValueError("Wrong reference type, available types: avg mode <latitude,longitude>")
     
              if reference_position is None:
                  return None

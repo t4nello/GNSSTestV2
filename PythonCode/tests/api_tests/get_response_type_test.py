@@ -7,15 +7,15 @@ def test_response_content_type_json():
     endpoints = [
         "/sessions",
         "/devices",
-        "/devices/2268",  
-        "/data/360/all/position",  
-        "/avg/360", 
-        "/mode/360",
-        "/count/360/latitude",
-        "/sigma/360/avg",
-        "/drms/360/mode", 
-        "/2drms/360/avg", 
-        "/cep/360/avg"  
+        "/devices?sessionid=2268",  
+        "/session/data?sessionid=360&device=all&field=position",  
+        "/average?sessionid=360", 
+        "/mode?sessionid=360",
+        "/session/field-count?sessionid=360&field=latitude",
+        "/sigma?sessionid=360&reference_type=avg",
+        "/drms?sessionid=360&reference_type=mode", 
+        "/2drms?sessionid=360&reference_type=avg", 
+        "/cep?sessionid=360&reference_type=avg"  
     ]
     
     for endpoint in endpoints:

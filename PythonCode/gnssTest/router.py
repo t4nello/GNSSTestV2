@@ -69,7 +69,7 @@ class Router:
         def stop_session():
             result = self.session_manager.disable_session()
             if result == True:
-                return "OK", 200
+                return jsonify({"status": "Session stopped succesfully"}), 200
             else:
                 return jsonify({"error": "Session already Stopped"}), 400
 
@@ -84,77 +84,105 @@ class Router:
             unique_session_ids = self.data_processor.get_unique_session_ids()
             return jsonify({"sessions": unique_session_ids})
 
+
         @self.app.route('/api/devices', methods=['GET'])
         def get_devices():
-            unique_devices = self.data_processor.get_unique_devices()
-            return jsonify({"devices": unique_devices})
+            sessionid = request.args.get('sessionid')
+            if sessionid is not None:
+                unique_devices = self.data_processor.get_unique_devices_per_session(sessionid)
+            else:
+                unique_devices = self.data_processor.get_unique_devices()
+            if len(unique_devices) > 0: 
+                return jsonify({"devices": unique_devices}), 200
+            else:
+                return jsonify({"error": "No data available for this session"}), 404  
 
-        @self.app.route('/api/data/<sessionid>/<device>/<field>', methods=['GET'])
-        def get_data(device, field, sessionid):
-            if field not in self.valid_fields:
-                return jsonify({"error": "Invalid field"}), 400
-            if device == "all":
-                if field == "position":
-                    data = self.data_processor.get_position_for_session(sessionid)
+        @self.app.route('/api/session/data', methods=['GET'])
+        def get_data():
+            sessionid = request.args.get('sessionid')
+            device = request.args.get('device')
+            field = request.args.get('field')
+            if not sessionid or not device or not field:
+                return jsonify({"error": "Missing parameter"}), 400
+            else:  
+                if field not in self.valid_fields:
+                    return jsonify({"error": "Invalid field"}), 400
+                if device == "all":
+                    if field == "position":
+                        data = self.data_processor.get_position_for_session(sessionid)
+                    else:
+                        data = self.data_processor.get_measurand_for_device(field, sessionid)
                 else:
-                    data = self.data_processor.get_measurand_for_device(field, sessionid)
-            else:
-                if field == "position":
-                    data = self.data_processor.get_position_for_device(device, sessionid)
-                else: 
-                    data = self.data_processor.get_measurand_for_session(device, field ,sessionid)
-            if data:
-                return jsonify(data)
-            else:
-                return jsonify({"error": "Missing data"}), 404  
+                    if field == "position":
+                        data = self.data_processor.get_position_for_device(device, sessionid)
+                    else: 
+                        data = self.data_processor.get_measurand_for_session(device, field ,sessionid)
+                if data:
+                    return jsonify(data)
+                else:
+                    return jsonify({"error": "Missing data"}), 404  
 
-        @self.app.route('/api/count/<session>/<field>', methods=['GET'])
-        def get_field_counts_per_session(session, field):
-            if field not in self.valid_fields:
-                return jsonify({"error": "Invalid field"}), 400
-            unique_devices = self.data_processor.get_field_count(session, field)
-            if unique_devices:
-                return jsonify(unique_devices)
-            else:
-                return jsonify({"error": "No average position data available for this session."}), 404
+        @self.app.route('/api/session/field-count', methods=['GET'])
+        def get_field_counts_per_session():
+            sessionid = request.args.get('sessionid')
+            field = request.args.get('field')
+            if not sessionid or not field:
+                return jsonify({"error": "Missing parameter"}), 400
+            else:  
+                if field not in self.valid_fields:
+                    return jsonify({"error": "Invalid field"}), 400
+                unique_devices = self.data_processor.get_field_count(sessionid, field)
+                if unique_devices:
+                    return jsonify(unique_devices)
+                else:
+                    return jsonify({"error": "No average position data available for this session."}), 404
 
-        @self.app.route('/api/devices/<session>', methods=['GET'])
-        def get_devices_per_session(session):
-            unique_devices = self.data_processor.get_unique_devices_per_session(session)
-            if unique_devices:
-                return jsonify(unique_devices)
-            else:
-                return jsonify({"error": "No average position data available for this session."}), 404
+        @self.app.route('/api/average', methods=['GET'])
+        def get_average_values():
+            sessionid = request.args.get('sessionid')
+            if not sessionid:
+                return jsonify({"error": "Missing parameter"}), 400
+            else:  
+                average_position_data = self.measurand_calculator.calculate_average_position(sessionid)
+                if average_position_data:
+                    return jsonify(average_position_data)
+                else:
+                    return jsonify({"error": "No average position data available for this session."}), 404
 
-        @self.app.route('/api/avg/<sessionid>', methods=['GET'])
-        def get_average_values(sessionid):
-            average_position_data = self.measurand_calculator.calculate_average_position(sessionid)
-            if average_position_data:
-                return jsonify(average_position_data)
-            else:
-                return jsonify({"error": "No average position data available for this session."}), 404
-
-        @self.app.route('/api/mode/<sessionid>', methods=['GET'])
-        def get_most_frequent_position(sessionid):
-            most_frequent_position = self.measurand_calculator.most_frequent_position(sessionid)
-            if most_frequent_position:
-                return jsonify({"most_frequent_position": most_frequent_position})
-            else:
-                return jsonify({"error": "No position data available for this session."}), 404
-
-        @self.app.route('/api/sigma/<sessionid>/<reference_type>', methods=['GET'])
-        def get_sigma(sessionid, reference_type):
-            try:
-                sigma_values = self.measurand_calculator.calculate_sigma(sessionid, reference_type)
-                if sigma_values:
-                    return jsonify(sigma_values)
+        @self.app.route('/api/mode', methods=['GET'])
+        def get_most_frequent_position():
+            sessionid = request.args.get('sessionid')
+            if not sessionid:
+                return jsonify({"error": "Missing parameter"}), 400
+            else:  
+                most_frequent_position = self.measurand_calculator.most_frequent_position(sessionid)
+                if most_frequent_position:
+                    return jsonify({"most_frequent_position": most_frequent_position})
                 else:
                     return jsonify({"error": "No position data available for this session."}), 404
-            except ValueError as e:
-                return jsonify({"error": str(e)}), 400
 
-        @self.app.route('/api/drms/<sessionid>/<reference_type>', methods=['GET'])
-        def get_drms(sessionid, reference_type):
+        @self.app.route('/api/sigma', methods=['GET'])
+        def get_sigma():
+            sessionid = request.args.get('sessionid')
+            reference_type = request.args.get('reference_type')
+            if not sessionid or not reference_type:
+                return jsonify({"error": "Missing parameter"}), 400
+            else:  
+                try:
+                    sigma_values = self.measurand_calculator.calculate_sigma(sessionid, reference_type)
+                    if sigma_values:
+                        return jsonify(sigma_values)
+                    else:
+                        return jsonify({"error": "No position data available for this session."}), 404
+                except ValueError as e:
+                    return jsonify({"error": str(e)}), 400
+
+        @self.app.route('/api/drms', methods=['GET'])
+        def get_drms():
+            sessionid = request.args.get('sessionid')
+            reference_type = request.args.get('reference_type')
+            if not sessionid or not reference_type:
+                return jsonify({"error": "Missing parameter"}), 400
             try:
                 drms_values = self.measurand_calculator.calculate_drms(sessionid, reference_type)
                 if drms_values:
@@ -164,23 +192,31 @@ class Router:
             except ValueError as e:
                 return jsonify({"error": str(e)}), 400
 
-        @self.app.route('/api/2drms/<sessionid>/<reference_type>', methods=['GET'])
-        def get_2drms(sessionid, reference_type):
+        @self.app.route('/api/2drms', methods=['GET'])
+        def get_2drms():
+            sessionid = request.args.get('sessionid')
+            reference_type = request.args.get('reference_type')
+            if not sessionid or not reference_type:
+                return jsonify({"error": "Missing parameter"}), 400
             try:
-                two_drms_values = self.measurand_calculator.calculate_2drms(sessionid, reference_type)
-                if two_drms_values:
-                    return jsonify(two_drms_values)
+                drms_values = self.measurand_calculator.calculate_2drms(sessionid, reference_type)
+                if drms_values:
+                    return jsonify(drms_values)
                 else:
                     return jsonify({"error": "No position data available for this session."}), 404
             except ValueError as e:
                 return jsonify({"error": str(e)}), 400
                 
-        @self.app.route('/api/cep/<sessionid>/<reference_type>', methods=['GET'])
-        def get_cep(sessionid, reference_type):
+        @self.app.route('/api/cep', methods=['GET'])
+        def get_cep():
+            sessionid = request.args.get('sessionid')
+            reference_type = request.args.get('reference_type')
+            if not sessionid or not reference_type:
+                return jsonify({"error": "Missing parameter"}), 400
             try:
-                cep_values = self.measurand_calculator.calculate_cep(sessionid, reference_type)
-                if cep_values:
-                    return jsonify(cep_values)
+                drms_values = self.measurand_calculator.calculate_cep(sessionid, reference_type)
+                if drms_values:
+                    return jsonify(drms_values)
                 else:
                     return jsonify({"error": "No position data available for this session."}), 404
             except ValueError as e:
@@ -194,7 +230,3 @@ class Router:
                 return jsonify({"message": "Threshold set successfully", "threshold": threshold}), 200
             except ValueError as e:
                 return jsonify({"error": str(e)}), 400
-
-        @self.app.route('/api/algorithm/devices/faulted', methods=['GET'])
-        def get_faulted_devices(self):
-            return jsonify({"faulted_devices": list(self.algorithm.excluded_devices)})
