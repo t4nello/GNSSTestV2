@@ -8,335 +8,6 @@
         "env": []
     },
     {
-        "id": "74d59a36524062f4",
-        "type": "tab",
-        "label": "Historical Data",
-        "disabled": false,
-        "info": "",
-        "env": []
-    },
-    {
-        "id": "e3aded4c0f25cd47",
-        "type": "mqtt-broker",
-        "name": "",
-        "broker": "127.0.0.1",
-        "port": "1883",
-        "tls": "",
-        "clientid": "NodeRed",
-        "autoConnect": true,
-        "usetls": false,
-        "protocolVersion": "4",
-        "keepalive": "60",
-        "cleansession": true,
-        "birthTopic": "",
-        "birthQos": "0",
-        "birthPayload": "",
-        "birthMsg": {},
-        "closeTopic": "",
-        "closeQos": "0",
-        "closePayload": "",
-        "closeMsg": {},
-        "willTopic": "",
-        "willQos": "0",
-        "willPayload": "",
-        "willMsg": {},
-        "userProps": "",
-        "sessionExpiry": ""
-    },
-    {
-        "id": "ced1aee10f7070c6",
-        "type": "ui-base",
-        "name": "My Dashboard",
-        "path": "/dashboard",
-        "includeClientData": true,
-        "acceptsClientConfig": [
-            "ui-notification",
-            "ui-control"
-        ],
-        "showPathInSidebar": false,
-        "navigationStyle": "default"
-    },
-    {
-        "id": "08b10e6c78fd3e99",
-        "type": "ui-theme",
-        "name": "Default Theme",
-        "colors": {
-            "surface": "#ffffff",
-            "primary": "#0094ce",
-            "bgPage": "#eeeeee",
-            "groupBg": "#ffffff",
-            "groupOutline": "#cccccc"
-        },
-        "sizes": {
-            "pagePadding": "12px",
-            "groupGap": "12px",
-            "groupBorderRadius": "4px",
-            "widgetGap": "12px"
-        }
-    },
-    {
-        "id": "22da3639395340e4",
-        "type": "ui-page",
-        "name": "Home",
-        "ui": "ced1aee10f7070c6",
-        "path": "/home",
-        "icon": "home",
-        "layout": "notebook",
-        "theme": "08b10e6c78fd3e99",
-        "order": -1,
-        "className": "",
-        "visible": "true",
-        "disabled": "false"
-    },
-    {
-        "id": "942a36ba6f67aeec",
-        "type": "ui-group",
-        "name": "Data Control",
-        "page": "22da3639395340e4",
-        "width": "20",
-        "height": "1",
-        "order": 1,
-        "showTitle": true,
-        "className": "",
-        "visible": "true",
-        "disabled": "false"
-    },
-    {
-        "id": "a0ba1c26fbb229b5",
-        "type": "ui-group",
-        "name": "Latitude",
-        "page": "22da3639395340e4",
-        "width": "20",
-        "height": "1",
-        "order": 4,
-        "showTitle": false,
-        "className": "",
-        "visible": "true",
-        "disabled": "false"
-    },
-    {
-        "id": "866ecad3517cd489",
-        "type": "ui-group",
-        "name": "Longitude",
-        "page": "22da3639395340e4",
-        "width": "20",
-        "height": "1",
-        "order": 5,
-        "showTitle": false,
-        "className": "",
-        "visible": "true",
-        "disabled": "false"
-    },
-    {
-        "id": "00cbb070dfaa9baf",
-        "type": "ui-group",
-        "name": "Speed",
-        "page": "22da3639395340e4",
-        "width": "20",
-        "height": "1",
-        "order": 7,
-        "showTitle": false,
-        "className": "",
-        "visible": "true",
-        "disabled": "false"
-    },
-    {
-        "id": "d3a468171151978b",
-        "type": "ui-group",
-        "name": "Altitude",
-        "page": "22da3639395340e4",
-        "width": "20",
-        "height": "1",
-        "order": 8,
-        "showTitle": false,
-        "className": "",
-        "visible": "true",
-        "disabled": "false"
-    },
-    {
-        "id": "cb340146829ab097",
-        "type": "ui-group",
-        "name": "Satellites",
-        "page": "22da3639395340e4",
-        "width": "20",
-        "height": "1",
-        "order": 9,
-        "showTitle": false,
-        "className": "",
-        "visible": "true",
-        "disabled": "false"
-    },
-    {
-        "id": "15ded955ca926cc6",
-        "type": "ui-group",
-        "name": "Statistics",
-        "page": "22da3639395340e4",
-        "width": "20",
-        "height": "1",
-        "order": 3,
-        "showTitle": false,
-        "className": "",
-        "visible": "true",
-        "disabled": "false"
-    },
-    {
-        "id": "a26721c1e2cfabc2",
-        "type": "ui-group",
-        "name": "Map",
-        "page": "22da3639395340e4",
-        "width": "20",
-        "height": "1",
-        "order": 6,
-        "showTitle": false,
-        "className": "",
-        "visible": "true",
-        "disabled": "false"
-    },
-    {
-        "id": "14b24dee1b6d4920",
-        "type": "ui-page",
-        "name": "Historical sessions",
-        "ui": "ced1aee10f7070c6",
-        "path": "/historicalsessions",
-        "icon": "history",
-        "layout": "notebook",
-        "theme": "08b10e6c78fd3e99",
-        "order": -1,
-        "className": "",
-        "visible": "true",
-        "disabled": "false"
-    },
-    {
-        "id": "1ffe87396d3a9bc2",
-        "type": "ui-group",
-        "name": "Control Panel",
-        "page": "14b24dee1b6d4920",
-        "width": "20",
-        "height": "1",
-        "order": 1,
-        "showTitle": true,
-        "className": "",
-        "visible": "true",
-        "disabled": "false"
-    },
-    {
-        "id": "e1f772bd6d25f3f3",
-        "type": "ui-group",
-        "name": "Latitude",
-        "page": "14b24dee1b6d4920",
-        "width": "20",
-        "height": "1",
-        "order": 4,
-        "showTitle": false,
-        "className": "",
-        "visible": "true",
-        "disabled": "false"
-    },
-    {
-        "id": "cd58868323b5ebd7",
-        "type": "ui-group",
-        "name": "Longitude",
-        "page": "14b24dee1b6d4920",
-        "width": "20",
-        "height": "1",
-        "order": 5,
-        "showTitle": false,
-        "className": "",
-        "visible": "true",
-        "disabled": "false"
-    },
-    {
-        "id": "22e2ea4346146595",
-        "type": "ui-group",
-        "name": "Altitude",
-        "page": "14b24dee1b6d4920",
-        "width": "20",
-        "height": "1",
-        "order": 8,
-        "showTitle": false,
-        "className": "",
-        "visible": "true",
-        "disabled": "false"
-    },
-    {
-        "id": "ef81b811a587d6b8",
-        "type": "ui-group",
-        "name": "Speed",
-        "page": "14b24dee1b6d4920",
-        "width": "20",
-        "height": "1",
-        "order": 7,
-        "showTitle": false,
-        "className": "",
-        "visible": "true",
-        "disabled": "false"
-    },
-    {
-        "id": "88a41f0527348274",
-        "type": "ui-group",
-        "name": "Satellites",
-        "page": "14b24dee1b6d4920",
-        "width": "20",
-        "height": "1",
-        "order": 9,
-        "showTitle": false,
-        "className": "",
-        "visible": "true",
-        "disabled": "false"
-    },
-    {
-        "id": "70d8e694875be30a",
-        "type": "ui-group",
-        "name": "Map",
-        "page": "14b24dee1b6d4920",
-        "width": "20",
-        "height": "1",
-        "order": 6,
-        "showTitle": false,
-        "className": "",
-        "visible": "true",
-        "disabled": "false"
-    },
-    {
-        "id": "ee506276f4e213c4",
-        "type": "ui-group",
-        "name": "Statistics",
-        "page": "14b24dee1b6d4920",
-        "width": "20",
-        "height": "1",
-        "order": 3,
-        "showTitle": false,
-        "className": "",
-        "visible": "true",
-        "disabled": "false"
-    },
-    {
-        "id": "b34978f36ce6c263",
-        "type": "ui-group",
-        "name": "Alghoritm control",
-        "page": "22da3639395340e4",
-        "width": "20",
-        "height": "1",
-        "order": 2,
-        "showTitle": true,
-        "className": "",
-        "visible": "true",
-        "disabled": "false"
-    },
-    {
-        "id": "b3d8bd568f7d52ae",
-        "type": "ui-group",
-        "name": "Data Downloader",
-        "page": "14b24dee1b6d4920",
-        "width": "6",
-        "height": "1",
-        "order": 2,
-        "showTitle": true,
-        "className": "",
-        "visible": "true",
-        "disabled": "false"
-    },
-    {
         "id": "c4a71c301976b6ad",
         "type": "ui-button-group",
         "z": "9ff186a6e56048ac",
@@ -381,8 +52,8 @@
         ],
         "topic": "topic",
         "topicType": "msg",
-        "x": 930,
-        "y": 260,
+        "x": 1150,
+        "y": 340,
         "wires": [
             [
                 "eb702432c37dddbf"
@@ -460,47 +131,6 @@
         ]
     },
     {
-        "id": "ceade695a7eb5eaf",
-        "type": "mqtt in",
-        "z": "9ff186a6e56048ac",
-        "name": "",
-        "topic": "esp/connection/connected",
-        "qos": "0",
-        "datatype": "auto-detect",
-        "broker": "e3aded4c0f25cd47",
-        "nl": false,
-        "rap": true,
-        "rh": 0,
-        "inputs": 0,
-        "x": 530,
-        "y": 680,
-        "wires": [
-            [
-                "033dc9523651db9d"
-            ]
-        ]
-    },
-    {
-        "id": "abd94eb4e1c5d91c",
-        "type": "function",
-        "z": "9ff186a6e56048ac",
-        "name": "Prepare connected Devices",
-        "func": "let connectedDevices = context.get('connectedDevices') || [];\n\nfunction handleMessages(msg) {\n    if (msg.connected) {\n        if (!connectedDevices.includes(msg.payload)) {\n            connectedDevices.push(msg.payload);\n        }\n    } else if (msg.disconnected) {\n        const index = connectedDevices.indexOf(msg.payload);\n        if (index !== -1) {\n            connectedDevices.splice(index, 1);\n        }\n    }\n\n    context.set('connectedDevices', connectedDevices);\n\n    const jsonData = connectedDevices.map(device => {\n       return { \"Connected device\": device };\n    });\n\n    msg.payload = jsonData;\n    return msg;\n}\n\nreturn handleMessages(msg);\n",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 1300,
-        "y": 880,
-        "wires": [
-            [
-                "879c189449b7898c"
-            ]
-        ]
-    },
-    {
         "id": "93e2ad51bdc8c501",
         "type": "function",
         "z": "9ff186a6e56048ac",
@@ -521,33 +151,11 @@
         ]
     },
     {
-        "id": "2c170da72cb252ab",
-        "type": "mqtt in",
-        "z": "9ff186a6e56048ac",
-        "name": "",
-        "topic": "gps/metric/status",
-        "qos": "2",
-        "datatype": "auto-detect",
-        "broker": "e3aded4c0f25cd47",
-        "nl": false,
-        "rap": true,
-        "rh": 0,
-        "inputs": 0,
-        "x": 100,
-        "y": 280,
-        "wires": [
-            [
-                "20e859677b853066",
-                "d9039de53aec5ce5"
-            ]
-        ]
-    },
-    {
         "id": "20e859677b853066",
         "type": "function",
         "z": "9ff186a6e56048ac",
         "name": "if started",
-        "func": "if (msg.payload == \"started\") {\n    msg.enabled = false\n}\nelse if (msg.payload == \"stopped\") {\n    msg.enabled = true\n}\nreturn msg;",
+        "func": "var obj = JSON.parse(msg.payload)\nvar status = obj.Status\n\nif (status == \"started\") {\n    msg.enabled = false\n}\nelse if (status == \"stopped\") {\n    msg.enabled = true\n}\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -567,7 +175,7 @@
         "type": "function",
         "z": "9ff186a6e56048ac",
         "name": "if stopped",
-        "func": "if (msg.payload == \"started\") {\n    msg.enabled = true\n}\nelse if (msg.payload == \"stopped\") {\n    msg.enabled = false\n}\nreturn msg;",
+        "func": "var obj = JSON.parse(msg.payload)\nvar status = obj.Status\n\nif (status == \"started\") {\n    msg.enabled = true\n}\nelse if (status == \"stopped\") {\n    msg.enabled = false\n}\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -581,42 +189,6 @@
                 "91aad5ed5fc93ff2"
             ]
         ]
-    },
-    {
-        "id": "3b89209a0e0d0aab",
-        "type": "mqtt out",
-        "z": "9ff186a6e56048ac",
-        "name": "",
-        "topic": "gps/enable",
-        "qos": "",
-        "retain": "",
-        "respTopic": "",
-        "contentType": "",
-        "userProps": "",
-        "correl": "",
-        "expiry": "",
-        "broker": "e3aded4c0f25cd47",
-        "x": 710,
-        "y": 240,
-        "wires": []
-    },
-    {
-        "id": "7ef2036e26c96df0",
-        "type": "mqtt out",
-        "z": "9ff186a6e56048ac",
-        "name": "",
-        "topic": "gps/disable",
-        "qos": "",
-        "retain": "",
-        "respTopic": "",
-        "contentType": "",
-        "userProps": "",
-        "correl": "",
-        "expiry": "",
-        "broker": "e3aded4c0f25cd47",
-        "x": 710,
-        "y": 320,
-        "wires": []
     },
     {
         "id": "bc5148e8d73a643d",
@@ -643,7 +215,8 @@
         "y": 240,
         "wires": [
             [
-                "3b89209a0e0d0aab"
+                "8666127ab9061ff7",
+                "b53aa078b622c886"
             ]
         ]
     },
@@ -672,182 +245,9 @@
         "y": 320,
         "wires": [
             [
-                "7ef2036e26c96df0"
+                "0081a6ec04dca689",
+                "b53aa078b622c886"
             ]
-        ]
-    },
-    {
-        "id": "34075da3ccab73f2",
-        "type": "ui-button",
-        "z": "9ff186a6e56048ac",
-        "d": true,
-        "group": "942a36ba6f67aeec",
-        "name": "",
-        "label": "Send Heartbeat",
-        "order": 5,
-        "width": "0",
-        "height": "0",
-        "emulateClick": false,
-        "tooltip": "",
-        "color": "",
-        "bgcolor": "",
-        "className": "",
-        "icon": "",
-        "iconPosition": "left",
-        "payload": "",
-        "payloadType": "str",
-        "topic": "topic",
-        "topicType": "msg",
-        "x": 180,
-        "y": 420,
-        "wires": [
-            [
-                "051d94b5239b94bf"
-            ]
-        ]
-    },
-    {
-        "id": "051d94b5239b94bf",
-        "type": "mqtt out",
-        "z": "9ff186a6e56048ac",
-        "name": "",
-        "topic": "esp/heartbeat/receive",
-        "qos": "",
-        "retain": "",
-        "respTopic": "",
-        "contentType": "",
-        "userProps": "",
-        "correl": "",
-        "expiry": "",
-        "broker": "e3aded4c0f25cd47",
-        "x": 400,
-        "y": 420,
-        "wires": []
-    },
-    {
-        "id": "9095ddd06ba340ed",
-        "type": "mqtt in",
-        "z": "9ff186a6e56048ac",
-        "name": "",
-        "topic": "gps/algorithm/faulted",
-        "qos": "0",
-        "datatype": "utf8",
-        "broker": "e3aded4c0f25cd47",
-        "nl": false,
-        "rap": true,
-        "rh": 0,
-        "inputs": 0,
-        "x": 90,
-        "y": 60,
-        "wires": [
-            [
-                "5309dacf5028cfb8"
-            ]
-        ]
-    },
-    {
-        "id": "0dc615be25f827ea",
-        "type": "ui-notification",
-        "z": "9ff186a6e56048ac",
-        "ui": "ced1aee10f7070c6",
-        "position": "top left",
-        "colorDefault": true,
-        "color": "#000000",
-        "displayTime": "3",
-        "showCountdown": false,
-        "outputs": 1,
-        "allowDismiss": true,
-        "dismissText": "Close",
-        "raw": false,
-        "className": "",
-        "name": "",
-        "x": 670,
-        "y": 60,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "7e331515ed52dbf1",
-        "type": "mqtt in",
-        "z": "9ff186a6e56048ac",
-        "name": "",
-        "topic": "gps/algorithm/operative",
-        "qos": "0",
-        "datatype": "auto-detect",
-        "broker": "e3aded4c0f25cd47",
-        "nl": false,
-        "rap": true,
-        "rh": 0,
-        "inputs": 0,
-        "x": 100,
-        "y": 140,
-        "wires": [
-            [
-                "4490efad0b1e9470"
-            ]
-        ]
-    },
-    {
-        "id": "5309dacf5028cfb8",
-        "type": "function",
-        "z": "9ff186a6e56048ac",
-        "name": "Device inoperative",
-        "func": "var id = msg.payload\n\nmsg.payload = \"Device \" + id + \" has abnormal readings and it will not be included in the algorithm calculations\";\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 390,
-        "y": 60,
-        "wires": [
-            [
-                "0dc615be25f827ea"
-            ]
-        ]
-    },
-    {
-        "id": "4490efad0b1e9470",
-        "type": "function",
-        "z": "9ff186a6e56048ac",
-        "name": "Device operative",
-        "func": "var id = msg.payload\n\nmsg.payload = \"Device \" + id + \" is included back in calculations\";\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 390,
-        "y": 140,
-        "wires": [
-            [
-                "d05627b50c05e185"
-            ]
-        ]
-    },
-    {
-        "id": "d05627b50c05e185",
-        "type": "ui-notification",
-        "z": "9ff186a6e56048ac",
-        "ui": "ced1aee10f7070c6",
-        "position": "top right",
-        "colorDefault": true,
-        "color": "#000000",
-        "displayTime": "3",
-        "showCountdown": true,
-        "outputs": 1,
-        "allowDismiss": true,
-        "dismissText": "Close",
-        "raw": false,
-        "className": "",
-        "name": "",
-        "x": 670,
-        "y": 140,
-        "wires": [
-            []
         ]
     },
     {
@@ -887,7 +287,7 @@
         "passthru": true,
         "resendOnRefresh": true,
         "templateScope": "local",
-        "className": "responsive-iframe",
+        "className": "",
         "x": 1810,
         "y": 100,
         "wires": [
@@ -1086,8 +486,7 @@
         "y": 480,
         "wires": [
             [
-                "2890c2715a7015cd",
-                "246f05fbba8a3cf8"
+                "2890c2715a7015cd"
             ]
         ]
     },
@@ -1140,129 +539,6 @@
         ]
     },
     {
-        "id": "b0444ba5314aecb6",
-        "type": "mqtt in",
-        "z": "9ff186a6e56048ac",
-        "name": "",
-        "topic": "gps/algorithm/faulted",
-        "qos": "0",
-        "datatype": "utf8",
-        "broker": "e3aded4c0f25cd47",
-        "nl": false,
-        "rap": true,
-        "rh": 0,
-        "inputs": 0,
-        "x": 130,
-        "y": 540,
-        "wires": [
-            [
-                "25e6149c472d18b9"
-            ]
-        ]
-    },
-    {
-        "id": "25e6149c472d18b9",
-        "type": "function",
-        "z": "9ff186a6e56048ac",
-        "name": "Device inoperative",
-        "func": "var device = msg.payload\nmsg.faulted = device\n\nreturn msg",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 350,
-        "y": 540,
-        "wires": [
-            [
-                "02c362d72f28e567"
-            ]
-        ]
-    },
-    {
-        "id": "1315076dd21041e8",
-        "type": "function",
-        "z": "9ff186a6e56048ac",
-        "name": "Device operative",
-        "func": "var device = msg.payload\nmsg.operative = device\n\nreturn msg",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 350,
-        "y": 600,
-        "wires": [
-            [
-                "02c362d72f28e567"
-            ]
-        ]
-    },
-    {
-        "id": "a9841b280325c611",
-        "type": "mqtt in",
-        "z": "9ff186a6e56048ac",
-        "name": "",
-        "topic": "gps/algorithm/operative",
-        "qos": "0",
-        "datatype": "utf8",
-        "broker": "e3aded4c0f25cd47",
-        "nl": false,
-        "rap": true,
-        "rh": 0,
-        "inputs": 0,
-        "x": 120,
-        "y": 600,
-        "wires": [
-            [
-                "1315076dd21041e8"
-            ]
-        ]
-    },
-    {
-        "id": "02c362d72f28e567",
-        "type": "function",
-        "z": "9ff186a6e56048ac",
-        "name": "Faulted Devices handler",
-        "func": "let faultedAddresses = context.get('faultedAddresses') || [];\n\nfunction handleMessages(msg) {\n    if (msg.faulted) {\n        if (!faultedAddresses.includes(msg.payload)) {\n            faultedAddresses.push(msg.payload);\n        }\n    } else if (msg.operative) {\n        const index = faultedAddresses.indexOf(msg.payload);\n        if (index !== -1) {\n            faultedAddresses.splice(index, 1);\n        }\n    }\n\n    context.set('faultedAddresses', faultedAddresses);\n\n    const jsonData = faultedAddresses.map(device => {\n        return { \"Faulted device\": device };\n    });\n\n    msg.payload = jsonData;\n    return msg;\n}\n\nreturn handleMessages(msg);\n",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 630,
-        "y": 560,
-        "wires": [
-            [
-                "b2d94d70bb9391d7"
-            ]
-        ]
-    },
-    {
-        "id": "b2d94d70bb9391d7",
-        "type": "ui-table",
-        "z": "9ff186a6e56048ac",
-        "group": "b34978f36ce6c263",
-        "name": "Faulted Devices ",
-        "label": "text",
-        "order": 1,
-        "width": 0,
-        "height": 0,
-        "maxrows": "0",
-        "passthru": false,
-        "autocols": true,
-        "selectionType": "none",
-        "columns": [],
-        "x": 900,
-        "y": 560,
-        "wires": [
-            []
-        ]
-    },
-    {
         "id": "88d34033f814ed24",
         "type": "ui-button",
         "z": "9ff186a6e56048ac",
@@ -1287,27 +563,9 @@
         "y": 1180,
         "wires": [
             [
-                "353725a13e71f290"
+                "f8aa8ce1c8b3d523"
             ]
         ]
-    },
-    {
-        "id": "353725a13e71f290",
-        "type": "mqtt out",
-        "z": "9ff186a6e56048ac",
-        "name": "",
-        "topic": "gps/algorithm/threshold",
-        "qos": "",
-        "retain": "",
-        "respTopic": "",
-        "contentType": "",
-        "userProps": "",
-        "correl": "",
-        "expiry": "",
-        "broker": "e3aded4c0f25cd47",
-        "x": 450,
-        "y": 1180,
-        "wires": []
     },
     {
         "id": "30fb3a06b98af2f5",
@@ -1355,27 +613,6 @@
         ]
     },
     {
-        "id": "ed2be2120eb5b2c3",
-        "type": "mqtt in",
-        "z": "9ff186a6e56048ac",
-        "name": "",
-        "topic": "gps/metric/enable",
-        "qos": "2",
-        "datatype": "auto-detect",
-        "broker": "e3aded4c0f25cd47",
-        "nl": false,
-        "rap": true,
-        "rh": 0,
-        "inputs": 0,
-        "x": 150,
-        "y": 1020,
-        "wires": [
-            [
-                "50c16b2e697fe795"
-            ]
-        ]
-    },
-    {
         "id": "50c16b2e697fe795",
         "type": "ui-text",
         "z": "9ff186a6e56048ac",
@@ -1392,187 +629,16 @@
         "fontSize": 16,
         "color": "#717171",
         "className": "",
-        "x": 430,
-        "y": 1020,
+        "x": 890,
+        "y": 400,
         "wires": []
-    },
-    {
-        "id": "7b43279435b1ca87",
-        "type": "ui-template",
-        "z": "9ff186a6e56048ac",
-        "group": "942a36ba6f67aeec",
-        "page": "",
-        "ui": "",
-        "name": "",
-        "order": 0,
-        "width": "20",
-        "height": "1",
-        "head": "",
-        "format": "<template>\n    <div id=\"dialog\" style=\"display: none\">\n        <p id=\"dialog-message\" class=\"v-data-table-rows-no-data\" style=\"font-size: 20px;\" ></p>\n        <button id=\"btn-yes\" class=\"button-yes\">Yes</button>\n        <button id=\"btn-no\" class=\"button-no\">No</button>\n    </div>\n</template>\n<script>\n  var self = this; \n  this.$socket.on('msg-input:' + this.id, function(msg) {\n    var x = document.getElementById('dialog');\n    x.setAttribute('src', msg.payload);\n\n    var dialog = document.getElementById('dialog');\n    dialog.style.display = 'block';\n    var dialogMessage = document.getElementById('dialog-message');\n    dialogMessage.innerText = msg.payload;\n\n\n    document.getElementById('btn-yes').onclick = function() {     \n        dialog.style.display = 'none'; \n        var msg = {topic: \"test\", payload: \"Yes\"}; \n        self.send(msg); \n    };\n\n    document.getElementById('btn-no').onclick = function() {\n        dialog.style.display = 'none'; \n        var msg = {topic: \"test\", payload: \"No\"}; \n        self.send(msg); \n    };\n});\n</script>\n<style>\n    #dialog {\n    justify-items: center;\n}\n    .button-yes,\n    .button-no {\n        background-color: #4CAF50; /* Zielony kolor */\n        border: none;\n        color: white;\n        padding: 10px 20px;\n        text-align: center;\n        text-decoration: none;\n        display: inline-block;\n        font-size: 16px;\n        margin: 4px 2px;\n        cursor: pointer;\n        border-radius: 8px;\n    }\n\n    .button-no {\n        background-color: #f44336; /* Czerwony kolor */\n    }\n</style>",
-        "storeOutMessages": true,
-        "passthru": false,
-        "resendOnRefresh": true,
-        "templateScope": "local",
-        "className": "v-data-table-rows-no-data",
-        "x": 440,
-        "y": 1260,
-        "wires": [
-            [
-                "2cb0e39ef02e960a"
-            ]
-        ]
-    },
-    {
-        "id": "fc29f01df99ffae1",
-        "type": "mqtt in",
-        "z": "9ff186a6e56048ac",
-        "name": "",
-        "topic": "esp/connection/reconnect/allow",
-        "qos": "2",
-        "datatype": "auto-detect",
-        "broker": "e3aded4c0f25cd47",
-        "nl": false,
-        "rap": true,
-        "rh": 0,
-        "inputs": 0,
-        "x": 190,
-        "y": 1260,
-        "wires": [
-            [
-                "7b43279435b1ca87"
-            ]
-        ]
-    },
-    {
-        "id": "2cb0e39ef02e960a",
-        "type": "mqtt out",
-        "z": "9ff186a6e56048ac",
-        "name": "",
-        "topic": "esp/connection/reconnect",
-        "qos": "",
-        "retain": "",
-        "respTopic": "",
-        "contentType": "",
-        "userProps": "",
-        "correl": "",
-        "expiry": "",
-        "broker": "e3aded4c0f25cd47",
-        "x": 650,
-        "y": 1260,
-        "wires": []
-    },
-    {
-        "id": "e4bd298397780c17",
-        "type": "mqtt in",
-        "z": "9ff186a6e56048ac",
-        "name": "",
-        "topic": "esp/connection/disconnected",
-        "qos": "2",
-        "datatype": "auto-detect",
-        "broker": "e3aded4c0f25cd47",
-        "nl": false,
-        "rap": true,
-        "rh": 0,
-        "inputs": 0,
-        "x": 540,
-        "y": 740,
-        "wires": [
-            [
-                "3c59ed4621b1ab1f",
-                "e93586891a24d3ca"
-            ]
-        ]
-    },
-    {
-        "id": "700fb4db195657be",
-        "type": "ui-notification",
-        "z": "9ff186a6e56048ac",
-        "ui": "ced1aee10f7070c6",
-        "position": "top center",
-        "colorDefault": true,
-        "color": "#000000",
-        "displayTime": "10",
-        "showCountdown": true,
-        "outputs": 1,
-        "allowDismiss": true,
-        "dismissText": "Close",
-        "raw": false,
-        "className": "",
-        "name": "DEVICE DISCONNECTED",
-        "x": 480,
-        "y": 860,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "3c59ed4621b1ab1f",
-        "type": "function",
-        "z": "9ff186a6e56048ac",
-        "name": "pass device to notification about disconnection",
-        "func": "msg.payload = \"Device \" + msg.payload + \" lost it's connection!\"\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 500,
-        "y": 800,
-        "wires": [
-            [
-                "700fb4db195657be"
-            ]
-        ]
-    },
-    {
-        "id": "e93586891a24d3ca",
-        "type": "function",
-        "z": "9ff186a6e56048ac",
-        "name": "Device disconnected",
-        "func": "var device = msg.payload\nmsg.disconnected = device\n\nreturn msg",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 960,
-        "y": 740,
-        "wires": [
-            [
-                "abd94eb4e1c5d91c",
-                "59e57ee7ea7d7a8c"
-            ]
-        ]
-    },
-    {
-        "id": "033dc9523651db9d",
-        "type": "function",
-        "z": "9ff186a6e56048ac",
-        "name": "Device connected",
-        "func": "var device = msg.payload\nmsg.connected = device\n\nreturn msg",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 950,
-        "y": 680,
-        "wires": [
-            [
-                "abd94eb4e1c5d91c",
-                "59e57ee7ea7d7a8c"
-            ]
-        ]
     },
     {
         "id": "879c189449b7898c",
         "type": "ui-table",
         "z": "9ff186a6e56048ac",
         "group": "942a36ba6f67aeec",
-        "name": "Show device trackmap",
+        "name": "select device",
         "label": "text",
         "order": 1,
         "width": 0,
@@ -1582,8 +648,8 @@
         "autocols": true,
         "selectionType": "click",
         "columns": [],
-        "x": 1280,
-        "y": 940,
+        "x": 1110,
+        "y": 780,
         "wires": [
             [
                 "8c89243a422e02d2"
@@ -1591,77 +657,22 @@
         ]
     },
     {
-        "id": "0be8caf0e4e72287",
-        "type": "mqtt out",
-        "z": "9ff186a6e56048ac",
-        "name": "",
-        "topic": "esp/detect",
-        "qos": "",
-        "retain": "",
-        "respTopic": "",
-        "contentType": "",
-        "userProps": "",
-        "correl": "",
-        "expiry": "",
-        "broker": "e3aded4c0f25cd47",
-        "x": 1250,
-        "y": 1080,
-        "wires": []
-    },
-    {
         "id": "8c89243a422e02d2",
         "type": "function",
         "z": "9ff186a6e56048ac",
         "name": "function 1",
-        "func": "var device = msg.payload[\"Connected device\"];\nmsg.payload = device;\nreturn msg;\n",
+        "func": "var device = msg.payload[\"Connected device\"];\n\nreturn msg",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1260,
-        "y": 1000,
+        "x": 1100,
+        "y": 840,
         "wires": [
             [
-                "0be8caf0e4e72287",
-                "499b15afc76bda75"
-            ]
-        ]
-    },
-    {
-        "id": "499b15afc76bda75",
-        "type": "debug",
-        "z": "9ff186a6e56048ac",
-        "name": "debug 2",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "false",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 1720,
-        "y": 1260,
-        "wires": []
-    },
-    {
-        "id": "59e57ee7ea7d7a8c",
-        "type": "function",
-        "z": "9ff186a6e56048ac",
-        "name": "Prepare connected Devices for map",
-        "func": "let mapDevices = context.get('mapDevices') || [];\n\nfunction handleMessages(msg) {\n    if (msg.connected) {\n        if (!mapDevices.includes(msg.payload)) {\n            mapDevices.push(msg.payload);\n        }\n    } else if (msg.disconnected) {\n        const index = mapDevices.indexOf(msg.payload);\n        if (index !== -1) {\n            mapDevices.splice(index, 1);\n        }\n    }\n\n    context.set('mapDevices', mapDevices);\n\n    const jsonData = mapDevices.map(device => {\n       return { \"Show tracks of device:\": device };\n    });\n\n    msg.payload = jsonData;\n    return msg;\n}\n\nreturn handleMessages(msg);\n",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 1520,
-        "y": 700,
-        "wires": [
-            [
-                "670b326d9e01f889"
+                "389ed27f4abb24fd"
             ]
         ]
     },
@@ -1689,236 +700,34 @@
         ]
     },
     {
-        "id": "246f05fbba8a3cf8",
-        "type": "debug",
+        "id": "c024490d74831c33",
+        "type": "function",
         "z": "9ff186a6e56048ac",
-        "name": "debug 3",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "false",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 1900,
-        "y": 580,
-        "wires": []
-    },
-    {
-        "id": "62ca73c402b1900d",
-        "type": "function",
-        "z": "74d59a36524062f4",
-        "name": "GetSessionIDs",
-        "func": "let temp = [];\nfor (let i = 0; i < msg.payload.sessions.length; i++) {\n    temp.push(msg.payload.sessions[i]);\n}\nmsg.options = temp;\nreturn msg;\n",
+        "name": "if started",
+        "func": "var obj = JSON.parse(msg.payload)\nvar status = obj.session_id\nmsg.payload = status\nreturn msg;",
         "outputs": 1,
-        "timeout": "",
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 500,
-        "y": 180,
-        "wires": [
-            [
-                "5704046052c786cd"
-            ]
-        ]
-    },
-    {
-        "id": "9cb3d108de8d0e5d",
-        "type": "function",
-        "z": "74d59a36524062f4",
-        "name": "Historical Latitude Builder",
-        "func": "var session = flow.get(\"sessionId\");\nmsg.payload = \"http://192.168.0.213/grafana/d-solo/f1f6c4e2-a800-4ec9-9e31-12f6aad14ace/historical-sessions?orgId=1\" +\n    \"&var-getSessionIds=\" + msg.sessionId +\n    \"&panelId=\" + 2 +\n    \"&theme=light&kiosk\"     \nreturn msg;\n",
-        "outputs": 1,
-        "timeout": "",
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 890,
-        "y": 60,
-        "wires": [
-            [
-                "43bbbd47a6caa917"
-            ]
-        ]
-    },
-    {
-        "id": "28c3eb0f8ac18141",
-        "type": "function",
-        "z": "74d59a36524062f4",
-        "name": "Historical Longitude Builder",
-        "func": "var session = flow.get(\"sessionId\");\nmsg.payload = \"http://192.168.0.213/grafana/d-solo/f1f6c4e2-a800-4ec9-9e31-12f6aad14ace/historical-sessions?orgId=1\" +\n    \"&var-getSessionIds=\" + msg.sessionId +\n    \"&theme=light\" +\n    \"&panelId=\" + 3\nreturn msg;\n",
-        "outputs": 1,
-        "timeout": "",
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 900,
-        "y": 140,
-        "wires": [
-            [
-                "0ffc002c81186125"
-            ]
-        ]
-    },
-    {
-        "id": "7fa0c7c64a7f316f",
-        "type": "function",
-        "z": "74d59a36524062f4",
-        "name": "Historical Altitude Builder",
-        "func": "var session = flow.get(\"sessionId\");\nmsg.payload = \"http://192.168.0.213/grafana/d-solo/f1f6c4e2-a800-4ec9-9e31-12f6aad14ace/historical-sessions?orgId=1\" +\n    \"&var-getSessionIds=\" + msg.sessionId +\n    \"&theme=light\" +\n    \"&panelId=\" + 5\nreturn msg;\n",
-        "outputs": 1,
-        "timeout": "",
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 890,
-        "y": 220,
-        "wires": [
-            [
-                "e17da91d06bacb15"
-            ]
-        ]
-    },
-    {
-        "id": "6b4e427fb87dace7",
-        "type": "function",
-        "z": "74d59a36524062f4",
-        "name": "Historical Speed Builder",
-        "func": "var session = flow.get(\"sessionId\");\nmsg.payload = \"http://192.168.0.213/grafana/d-solo/f1f6c4e2-a800-4ec9-9e31-12f6aad14ace/historical-sessions?orgId=1\" +\n    \"&var-getSessionIds=\" + msg.sessionId +\n    \"&theme=light\" +\n    \"&panelId=\" + 4\nreturn msg;\n",
-        "outputs": 1,
-        "timeout": "",
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 890,
-        "y": 300,
-        "wires": [
-            [
-                "0fcb1b83166c1534"
-            ]
-        ]
-    },
-    {
-        "id": "c73b85ee7b3a801e",
-        "type": "function",
-        "z": "74d59a36524062f4",
-        "name": "Historical Satellites Builder",
-        "func": "var session = flow.get(\"sessionId\");\nmsg.payload = \"http://192.168.0.213/grafana/d-solo/f1f6c4e2-a800-4ec9-9e31-12f6aad14ace/historical-sessions?orgId=1\" +\n    \"&var-getSessionIds=\" + msg.sessionId +\n    \"&theme=light\" +\n    \"&panelId=\" + 6\nreturn msg;\n",
-        "outputs": 1,
-        "timeout": "",
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 900,
-        "y": 380,
-        "wires": [
-            [
-                "1019f08b40e5dec4"
-            ]
-        ]
-    },
-    {
-        "id": "166b5b3fd76e50a0",
-        "type": "function",
-        "z": "74d59a36524062f4",
-        "name": "Historical Map Builder",
-        "func": "var session = flow.get(\"sessionId\");\nvar deviceId = flow.get(\"deviceId\")\nmsg.payload = \"http://192.168.0.213/grafana/d-solo/f1f6c4e2-a800-4ec9-9e31-12f6aad14ace/historical-sessions?orgId=1\" +\n    \"&var-getSessionIds=\" + session +\n    \"&var-getDevices=\" + deviceId + \n    \"&panelId=\" + 7\n\nreturn msg;",
-        "outputs": 1,
-        "timeout": "",
+        "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
         "x": 880,
-        "y": 460,
+        "y": 260,
         "wires": [
             [
-                "63675ba13c72b57d"
+                "50c16b2e697fe795"
             ]
         ]
     },
     {
-        "id": "361be63ef6f04d92",
-        "type": "function",
-        "z": "74d59a36524062f4",
-        "name": "Get list of devices",
-        "func": "let temp = [];\nfor (let i = 0; i < msg.payload.devices.length; i++) {\n    temp.push(msg.payload.devices[i]);\n   \n}\nmsg.options = temp;\nreturn msg;\n",
-        "outputs": 1,
-        "timeout": "",
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 250,
-        "y": 380,
-        "wires": [
-            [
-                "f85175776d313b36"
-            ]
-        ]
-    },
-    {
-        "id": "f85183421a821f7a",
-        "type": "function",
-        "z": "74d59a36524062f4",
-        "name": "Historical Statiistics Builder",
-        "func": "var session = flow.get(\"sessionId\");\nmsg.payload = \"http://192.168.0.213/grafana/d-solo/f1f6c4e2-a800-4ec9-9e31-12f6aad14ace/historical-sessions?orgId=1\" +\n    \"&var-getSessionIds=\" + msg.sessionId +\n    \"&theme=light\" +\n    \"&panelId=\" + 8\nreturn msg;\n",
-        "outputs": 1,
-        "timeout": "",
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 900,
-        "y": 540,
-        "wires": [
-            [
-                "bc1e24ac8a5f4b5f"
-            ]
-        ]
-    },
-    {
-        "id": "aa272bee1079eb6a",
-        "type": "function",
-        "z": "74d59a36524062f4",
-        "name": "Pass sessionId to iFrames",
-        "func": "var sessionId = msg.payload\nmsg.sessionId = parseInt(sessionId)\nflow.set(\"sessionId\", msg.sessionId)\nreturn msg",
-        "outputs": 1,
-        "timeout": "",
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 540,
-        "y": 300,
-        "wires": [
-            [
-                "9cb3d108de8d0e5d",
-                "28c3eb0f8ac18141",
-                "7fa0c7c64a7f316f",
-                "6b4e427fb87dace7",
-                "c73b85ee7b3a801e",
-                "166b5b3fd76e50a0",
-                "f85183421a821f7a"
-            ]
-        ]
-    },
-    {
-        "id": "e34b589d6435a7f9",
+        "id": "8666127ab9061ff7",
         "type": "http request",
-        "z": "74d59a36524062f4",
+        "z": "9ff186a6e56048ac",
         "name": "",
-        "method": "GET",
-        "ret": "obj",
+        "method": "POST",
+        "ret": "txt",
         "paytoqs": "ignore",
-        "url": "http://127.0.0.1:5000/api/sessions",
+        "url": "http://127.0.0.1:5000/api/session/start",
         "tls": "",
         "persist": false,
         "proxy": "",
@@ -1926,23 +735,23 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 490,
-        "y": 120,
+        "x": 710,
+        "y": 240,
         "wires": [
             [
-                "62ca73c402b1900d"
+                "c024490d74831c33"
             ]
         ]
     },
     {
-        "id": "e41831c27cd3de0f",
+        "id": "0081a6ec04dca689",
         "type": "http request",
-        "z": "74d59a36524062f4",
+        "z": "9ff186a6e56048ac",
         "name": "",
-        "method": "GET",
-        "ret": "obj",
+        "method": "POST",
+        "ret": "txt",
         "paytoqs": "ignore",
-        "url": "http://127.0.0.1:5000/api/devices",
+        "url": "http://127.0.0.1:5000/api/session/stop",
         "tls": "",
         "persist": false,
         "proxy": "",
@@ -1950,682 +759,452 @@
         "authType": "",
         "senderr": false,
         "headers": [],
-        "x": 230,
+        "x": 710,
         "y": 320,
         "wires": [
+            []
+        ]
+    },
+    {
+        "id": "b53aa078b622c886",
+        "type": "http request",
+        "z": "9ff186a6e56048ac",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://127.0.0.1:5000/api/session/status",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 170,
+        "y": 280,
+        "wires": [
             [
-                "361be63ef6f04d92"
+                "20e859677b853066",
+                "d9039de53aec5ce5"
             ]
         ]
     },
     {
-        "id": "b9e4db19a19dfc47",
+        "id": "604a53a0978fd698",
         "type": "inject",
-        "z": "74d59a36524062f4",
+        "z": "9ff186a6e56048ac",
         "name": "",
-        "props": [],
-        "repeat": "30",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
         "crontab": "",
         "once": true,
         "onceDelay": 0.1,
         "topic": "",
-        "x": 70,
-        "y": 120,
-        "wires": [
-            [
-                "e34b589d6435a7f9",
-                "e41831c27cd3de0f"
-            ]
-        ]
-    },
-    {
-        "id": "f85175776d313b36",
-        "type": "ui-dropdown",
-        "z": "74d59a36524062f4",
-        "d": true,
-        "group": "1ffe87396d3a9bc2",
-        "name": "",
-        "label": "Select Device ",
-        "tooltip": "",
-        "order": 1,
-        "width": "6",
-        "height": "1",
-        "passthru": false,
-        "multiple": false,
-        "options": [
-            {
-                "label": "",
-                "value": "all",
-                "type": "str"
-            }
-        ],
         "payload": "",
-        "topic": "topic",
-        "topicType": "msg",
-        "className": "",
-        "x": 300,
-        "y": 460,
+        "payloadType": "date",
+        "x": 150,
+        "y": 360,
         "wires": [
             [
-                "f9d675d323ee0591"
+                "b53aa078b622c886"
             ]
         ]
     },
     {
-        "id": "f9d675d323ee0591",
+        "id": "abd94eb4e1c5d91c",
         "type": "function",
-        "z": "74d59a36524062f4",
-        "name": "Pass device to iFrame",
-        "func": "var deviceId = msg.payload;\nlet output = JSON.stringify(deviceId);\noutput = output.replaceAll(':', '%3A');\noutput = output.replaceAll('\"', '');\nflow.set(\"deviceId\", output);\nmsg.payload = output;\nreturn msg;",
+        "z": "9ff186a6e56048ac",
+        "name": "Prepare connected Devices",
+        "func": "let connectedDevices = context.get('connectedDevices') || [];\n\nfunction handleMessages(msg) {\n\n    if (msg.payload.connected_device) {\n        if (!connectedDevices.includes(msg.payload.connected_device)) {\n            connectedDevices.push(msg.payload.connected_device); // Poprawka tutaj\n        }\n    } else if (msg.payload.disconnected_device) {\n        const index = connectedDevices.indexOf(msg.payload.disconnected_device);\n        if (index !== -1) {\n            connectedDevices.splice(index, 1);\n        }\n    }\n\n    context.set('connectedDevices', connectedDevices);\n\n    const jsonData = connectedDevices.map(device => {\n        return { \"Connected device\": device }; // Poprawka klucza tutaj\n    });\n\n    msg.payload = jsonData;\n    return msg;\n}\n\nreturn handleMessages(msg);\n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 540,
-        "y": 460,
+        "x": 1140,
+        "y": 720,
         "wires": [
             [
-                "166b5b3fd76e50a0"
+                "879c189449b7898c",
+                "670b326d9e01f889"
             ]
         ]
     },
     {
-        "id": "5704046052c786cd",
-        "type": "ui-dropdown",
-        "z": "74d59a36524062f4",
-        "group": "1ffe87396d3a9bc2",
-        "name": "SessionId Selector",
-        "label": "Select Session ID",
-        "tooltip": "",
-        "order": 2,
-        "width": "6",
-        "height": "1",
-        "passthru": false,
-        "multiple": false,
-        "options": [
-            {
-                "label": "",
-                "value": "",
-                "type": "str"
-            }
-        ],
-        "payload": "",
-        "topic": "topic",
-        "topicType": "msg",
-        "className": "",
-        "x": 510,
-        "y": 240,
-        "wires": [
-            [
-                "aa272bee1079eb6a"
-            ]
-        ]
-    },
-    {
-        "id": "43bbbd47a6caa917",
-        "type": "ui-template",
-        "z": "74d59a36524062f4",
-        "group": "e1f772bd6d25f3f3",
-        "page": "",
-        "ui": "",
-        "name": "Historical Latitude Template",
-        "order": 0,
-        "width": 0,
-        "height": 0,
-        "head": "",
-        "format": "<template>\n  <iframe  \n    id=\"historicalLatitudeiFrame\"\n    class=\"responsive-history-iframe\"\n    style=\"overflow:hidden; margin:auto; border:0;\"></iframe>\n</template>\n\n<script>\nthis.$socket.on('msg-input:' + this.id, function(msg) {\n  var x = document.getElementById('historicalLatitudeiFrame');\n  x.setAttribute('src', msg.payload);\n})\n</script>\n\n\n",
-        "storeOutMessages": true,
-        "passthru": true,
-        "resendOnRefresh": true,
-        "templateScope": "local",
-        "className": "responsive-history-iframe",
-        "x": 1180,
-        "y": 60,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "0ffc002c81186125",
-        "type": "ui-template",
-        "z": "74d59a36524062f4",
-        "group": "cd58868323b5ebd7",
-        "page": "",
-        "ui": "",
-        "name": "Historical Longitude Template",
-        "order": 0,
-        "width": 0,
-        "height": 0,
-        "head": "",
-        "format": "<template>\n      <iframe  \n              width=\"900px\" \n              height=\"400px\" \n              id=\"historicalLongitudeiFrame\"\n              class=\"responsive-history-iframe\"\n              style=\"overflow:hidden; margin:auto; border:0px solid green;\"></iframe>\n    </template>\n<script>\nthis.$socket.on('msg-input:' + this.id, function(msg) {\nvar x = document.getElementById('historicalLongitudeiFrame');\nx.setAttribute('src', msg.payload);\n})\n</script>",
-        "storeOutMessages": true,
-        "passthru": true,
-        "resendOnRefresh": true,
-        "templateScope": "local",
-        "className": "responsive-history-iframe",
-        "x": 1180,
-        "y": 140,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "e17da91d06bacb15",
-        "type": "ui-template",
-        "z": "74d59a36524062f4",
-        "group": "22e2ea4346146595",
-        "page": "",
-        "ui": "",
-        "name": "Historical Altitude Template",
-        "order": 0,
-        "width": 0,
-        "height": 0,
-        "head": "",
-        "format": "<template>\n      <iframe  \n              width=\"900px\" \n              height=\"400px\" \n              id=\"historicalAltitudeiFrame\"\n              class=\"responsive-history-iframe\"\n              style=\"overflow:hidden; margin:auto; border:0px solid green;\"></iframe>\n    </template>\n<script>\nthis.$socket.on('msg-input:' + this.id, function(msg) {\nvar x = document.getElementById('historicalAltitudeiFrame');\nx.setAttribute('src', msg.payload);\n})\n</script>",
-        "storeOutMessages": true,
-        "passthru": true,
-        "resendOnRefresh": true,
-        "templateScope": "local",
-        "className": "responsive-history-iframe",
-        "x": 1180,
-        "y": 220,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "0fcb1b83166c1534",
-        "type": "ui-template",
-        "z": "74d59a36524062f4",
-        "group": "ef81b811a587d6b8",
-        "page": "",
-        "ui": "",
-        "name": "Historical SpeedTemplate",
-        "order": 0,
-        "width": 0,
-        "height": 0,
-        "head": "",
-        "format": "<template>\n      <iframe  \n              width=\"900px\" \n              height=\"400px\" \n              id=\"historicalSpeediFrame\"\n              class=\"responsive-history-iframe\"\n              style=\"overflow:hidden; margin:auto; border:0px solid green;\"></iframe>\n    </template>\n<script>\nthis.$socket.on('msg-input:' + this.id, function(msg) {\nvar x = document.getElementById('historicalSpeediFrame');\nx.setAttribute('src', msg.payload);\n})\n</script>",
-        "storeOutMessages": true,
-        "passthru": true,
-        "resendOnRefresh": true,
-        "templateScope": "local",
-        "className": "responsive-history-iframe",
-        "x": 1170,
-        "y": 300,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "1019f08b40e5dec4",
-        "type": "ui-template",
-        "z": "74d59a36524062f4",
-        "group": "88a41f0527348274",
-        "page": "",
-        "ui": "",
-        "name": "Historical Satellites Template",
+        "id": "b2d94d70bb9391d7",
+        "type": "ui-table",
+        "z": "9ff186a6e56048ac",
+        "group": "b34978f36ce6c263",
+        "name": "Faulted Devices ",
+        "label": "text",
         "order": 1,
         "width": 0,
         "height": 0,
-        "head": "",
-        "format": "<template>\n  <iframe width=\"900px\" height=\"400px\" id=\"historicalSatellitesiFrame\" class=\"responsive-history-iframe\"\n    style=\"overflow:hidden; margin:auto; border:0px solid green;\"></iframe>\n</template>\n<script>\n  this.$socket.on('msg-input:' + this.id, function(msg) {\nvar x = document.getElementById('historicalSatellitesiFrame');\nx.setAttribute('src', msg.payload);\n})\n</script>",
-        "storeOutMessages": true,
-        "passthru": true,
-        "resendOnRefresh": true,
-        "templateScope": "local",
-        "className": "responsive-history-iframe",
-        "x": 1180,
-        "y": 380,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "63675ba13c72b57d",
-        "type": "ui-template",
-        "z": "74d59a36524062f4",
-        "group": "70d8e694875be30a",
-        "page": "",
-        "ui": "",
-        "name": "Historical Map Template",
-        "order": 0,
-        "width": 0,
-        "height": 0,
-        "head": "",
-        "format": "<template>\n      <iframe  \n              width=\"900px\" \n              height=\"400px\" \n              id=\"historicalMapiFrame\"\n              class=\"responsive-history-iframe\"\n              style=\"overflow:hidden; margin:auto; border:0px solid green;\"></iframe>\n    </template>\n<script>\nthis.$socket.on('msg-input:' + this.id, function(msg) {\nvar x = document.getElementById('historicalMapiFrame');\nx.setAttribute('src', msg.payload);\n})\n</script>",
-        "storeOutMessages": true,
-        "passthru": true,
-        "resendOnRefresh": true,
-        "templateScope": "local",
-        "className": "responsive-iframe",
-        "x": 1170,
-        "y": 460,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "bc1e24ac8a5f4b5f",
-        "type": "ui-template",
-        "z": "74d59a36524062f4",
-        "group": "ee506276f4e213c4",
-        "page": "",
-        "ui": "",
-        "name": "Historical Statistics Template",
-        "order": 0,
-        "width": "0",
-        "height": "0",
-        "head": "",
-        "format": "<template>\n      <iframe  \n              width=\"900px\" \n              height=\"400px\" \n              id=\"historicalStatsiFrame\"\n              class=\"responsive-history-iframe\"\n              style=\"overflow:hidden; margin:auto; border:0px solid green;\"></iframe>\n    </template>\n<script>\nthis.$socket.on('msg-input:' + this.id, function(msg) {\nvar x = document.getElementById('historicalStatsiFrame');\nx.setAttribute('src', msg.payload);\n})\n</script>",
-        "storeOutMessages": true,
-        "passthru": true,
-        "resendOnRefresh": true,
-        "templateScope": "local",
-        "className": "responsive-history-iframe",
-        "x": 1180,
+        "maxrows": "0",
+        "passthru": false,
+        "autocols": true,
+        "selectionType": "none",
+        "columns": [],
+        "x": 900,
         "y": 540,
         "wires": [
             []
         ]
     },
     {
-        "id": "6391428c7a80bc2f",
-        "type": "ui-template",
-        "z": "74d59a36524062f4",
-        "group": "88a41f0527348274",
-        "page": "",
-        "ui": "",
+        "id": "02c362d72f28e567",
+        "type": "function",
+        "z": "9ff186a6e56048ac",
+        "name": "Faulted Devices handler",
+        "func": "let faultedAddresses = context.get('faultedAddresses') || [];\n\nfunction handleMessages(msg) {\n    if (msg.faulted) {\n        if (!faultedAddresses.includes(msg.payload)) {\n            faultedAddresses.push(msg.payload);\n        }\n    } else if (msg.operative) {\n        const index = faultedAddresses.indexOf(msg.payload);\n        if (index !== -1) {\n            faultedAddresses.splice(index, 1);\n        }\n    }\n\n    context.set('faultedAddresses', faultedAddresses);\n\n    const jsonData = faultedAddresses.map(device => {\n        return { \"Faulted device\": device };\n    });\n\n    msg.payload = jsonData;\n    return msg;\n}\n\nreturn handleMessages(msg);\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 630,
+        "y": 560,
+        "wires": [
+            [
+                "b2d94d70bb9391d7"
+            ]
+        ]
+    },
+    {
+        "id": "389ed27f4abb24fd",
+        "type": "http request",
+        "z": "9ff186a6e56048ac",
         "name": "",
-        "order": 2,
-        "width": "1",
-        "height": "1",
-        "head": "",
-        "format": "<style>\n.responsive-history-iframe {\n  width: 100%;\n  height: 400px; /* Default height */\n}\n\n/* Media queries for responsiveness */\n@media screen and (max-width: 768px) {\n  .responsive-iframe {\n    height: 300px; /* Adjust height for smaller screens */\n  }\n}\n</style>",
-        "storeOutMessages": true,
-        "passthru": false,
-        "resendOnRefresh": true,
-        "templateScope": "local",
-        "className": "",
-        "x": 260,
-        "y": 200,
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://localhost/api/device/detect",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 1130,
+        "y": 940,
         "wires": [
             []
         ]
     },
     {
-        "id": "f194a0b6751b187a",
-        "type": "ui-dropdown",
-        "z": "74d59a36524062f4",
-        "group": "b3d8bd568f7d52ae",
+        "id": "ac3f4c656a951609",
+        "type": "http request",
+        "z": "9ff186a6e56048ac",
         "name": "",
-        "label": "Select Device ",
-        "tooltip": "",
-        "order": 1,
-        "width": "6",
-        "height": "1",
-        "passthru": false,
-        "multiple": false,
-        "options": [
-            {
-                "label": "",
-                "value": "all",
-                "type": "str"
-            }
-        ],
-        "payload": "",
-        "topic": "topic",
-        "topicType": "msg",
-        "className": "",
-        "x": 720,
-        "y": 780,
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://127.0.0.1:5000/api/alghoritm/threshold/set",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 550,
+        "y": 1180,
         "wires": [
             [
-                "f44e0af0f694aa23"
+                "2cd8e2f73cd80f22"
             ]
         ]
     },
     {
-        "id": "a5364e2c90418d51",
-        "type": "function",
-        "z": "74d59a36524062f4",
-        "name": "Get list of devices",
-        "func": "let temp = [];\ntemp.push(\"all\");\nfor (let i = 0; i < msg.payload.devices.length; i++) {\n    temp.push(msg.payload.devices[i]);\n   \n}\nmsg.options = temp;\nreturn msg;\n",
+        "id": "2cd8e2f73cd80f22",
+        "type": "ui-notification",
+        "z": "9ff186a6e56048ac",
+        "ui": "ced1aee10f7070c6",
+        "position": "top right",
+        "colorDefault": true,
+        "color": "#000000",
+        "displayTime": "3",
+        "showCountdown": true,
         "outputs": 1,
-        "timeout": "",
+        "allowDismiss": true,
+        "dismissText": "Close",
+        "raw": false,
+        "className": "",
+        "name": "",
+        "x": 810,
+        "y": 1120,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "f8aa8ce1c8b3d523",
+        "type": "function",
+        "z": "9ff186a6e56048ac",
+        "name": "function 2",
+        "func": "var threshold = msg.payload\n\nmsg.payload = { \"threshold\": parseFloat(threshold)}\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 490,
-        "y": 780,
+        "x": 320,
+        "y": 1200,
         "wires": [
             [
-                "f194a0b6751b187a"
+                "ac3f4c656a951609"
             ]
         ]
     },
     {
-        "id": "b09907b8aa7f86d7",
-        "type": "ui-dropdown",
-        "z": "74d59a36524062f4",
-        "group": "b3d8bd568f7d52ae",
-        "name": "SessionId Selector",
-        "label": "Select Session ID",
-        "tooltip": "",
-        "order": 2,
-        "width": "6",
-        "height": "1",
-        "passthru": false,
-        "multiple": false,
-        "options": [
-            {
-                "label": "",
-                "value": "",
-                "type": "str"
-            }
-        ],
-        "payload": "",
-        "topic": "topic",
-        "topicType": "msg",
-        "className": "",
-        "x": 710,
-        "y": 680,
-        "wires": [
-            [
-                "b5b6b51eaa19aeb8"
-            ]
-        ]
-    },
-    {
-        "id": "0feede8e4a23bf09",
-        "type": "http request",
-        "z": "74d59a36524062f4",
+        "id": "3ea0703966495e62",
+        "type": "websocket in",
+        "z": "9ff186a6e56048ac",
         "name": "",
-        "method": "GET",
-        "ret": "obj",
-        "paytoqs": "ignore",
-        "url": "http://127.0.0.1:5000/api/sessions",
-        "tls": "",
-        "persist": false,
-        "proxy": "",
-        "insecureHTTPParser": false,
-        "authType": "",
-        "senderr": false,
-        "headers": [],
-        "x": 290,
-        "y": 680,
+        "server": "",
+        "client": "8cf92dfac584d0ba",
+        "x": 200,
+        "y": 720,
         "wires": [
             [
-                "876aae81c4ab57e9"
+                "0278adb9364578b2",
+                "5c02accc361a1423"
             ]
         ]
     },
     {
-        "id": "5165efc311f3e70c",
-        "type": "inject",
-        "z": "74d59a36524062f4",
-        "name": "",
-        "props": [],
-        "repeat": "30",
-        "crontab": "",
-        "once": true,
-        "onceDelay": 0.1,
-        "topic": "",
-        "x": 110,
-        "y": 740,
-        "wires": [
-            [
-                "0feede8e4a23bf09",
-                "688ae2e88cbbafd3"
-            ]
-        ]
-    },
-    {
-        "id": "688ae2e88cbbafd3",
-        "type": "http request",
-        "z": "74d59a36524062f4",
-        "name": "",
-        "method": "GET",
-        "ret": "obj",
-        "paytoqs": "ignore",
-        "url": "http://127.0.0.1:5000/api/devices",
-        "tls": "",
-        "persist": false,
-        "proxy": "",
-        "insecureHTTPParser": false,
-        "authType": "",
-        "senderr": false,
-        "headers": [],
-        "x": 290,
-        "y": 780,
-        "wires": [
-            [
-                "a5364e2c90418d51"
-            ]
-        ]
-    },
-    {
-        "id": "876aae81c4ab57e9",
+        "id": "0278adb9364578b2",
         "type": "function",
-        "z": "74d59a36524062f4",
-        "name": "GetSessionIDs",
-        "func": "let temp = [];\nfor (let i = 0; i < msg.payload.sessions.length; i++) {\n    temp.push(msg.payload.sessions[i]);\n}\nmsg.options = temp;\nreturn msg;\n",
+        "z": "9ff186a6e56048ac",
+        "name": "function 3",
+        "func": "var ping = msg.payload\nif (ping == \"ping\")\n    msg.payload = \"pong\"\nreturn msg;",
         "outputs": 1,
-        "timeout": "",
+        "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
         "x": 480,
-        "y": 680,
+        "y": 620,
         "wires": [
             [
-                "b09907b8aa7f86d7"
+                "be08d8fe3564e486"
             ]
         ]
     },
     {
-        "id": "101fb96a80f4a4ef",
-        "type": "ui-dropdown",
-        "z": "74d59a36524062f4",
-        "group": "b3d8bd568f7d52ae",
+        "id": "be08d8fe3564e486",
+        "type": "websocket out",
+        "z": "9ff186a6e56048ac",
         "name": "",
-        "label": "Select field",
-        "tooltip": "",
-        "order": 1,
-        "width": "6",
-        "height": "1",
-        "passthru": false,
-        "multiple": false,
-        "options": [
-            {
-                "label": "",
-                "value": "latitude",
-                "type": "str"
-            },
-            {
-                "label": "",
-                "value": "longitude",
-                "type": "str"
-            },
-            {
-                "label": "latitude and longitude",
-                "value": "latlon",
-                "type": "str"
-            },
-            {
-                "label": "",
-                "value": "speed",
-                "type": "str"
-            },
-            {
-                "label": "",
-                "value": "satellites",
-                "type": "str"
-            },
-            {
-                "label": "",
-                "value": "altitude",
-                "type": "str"
-            }
-        ],
-        "payload": "",
-        "topic": "topic",
-        "topicType": "msg",
-        "className": "",
-        "x": 710,
-        "y": 860,
-        "wires": [
-            [
-                "2bd732f676699d67"
-            ]
-        ]
+        "server": "",
+        "client": "8cf92dfac584d0ba",
+        "x": 520,
+        "y": 500,
+        "wires": []
     },
     {
-        "id": "b5b6b51eaa19aeb8",
+        "id": "5c02accc361a1423",
         "type": "function",
-        "z": "74d59a36524062f4",
-        "name": "GetSessionIDs",
-        "func": "var sessionid = msg.payload\nmsg.sessionid = sessionid\nflow.set(\"session\", msg.sessionid)\nreturn msg",
-        "outputs": 1,
-        "timeout": "",
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 920,
-        "y": 680,
-        "wires": [
-            [
-                "8d98c8115a9eeb52"
-            ]
-        ]
-    },
-    {
-        "id": "f44e0af0f694aa23",
-        "type": "function",
-        "z": "74d59a36524062f4",
-        "name": "Get device",
-        "func": "var device = msg.payload\nmsg.device = device\nflow.set(\"device\", msg.device)\nreturn msg",
-        "outputs": 1,
-        "timeout": "",
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 910,
-        "y": 780,
-        "wires": [
-            [
-                "8d98c8115a9eeb52"
-            ]
-        ]
-    },
-    {
-        "id": "2bd732f676699d67",
-        "type": "function",
-        "z": "74d59a36524062f4",
-        "name": "GetSessionIDs",
-        "func": "var field = msg.payload\nmsg.field = field\nflow.set(\"field\", msg.field)\nreturn msg",
-        "outputs": 1,
-        "timeout": "",
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 920,
-        "y": 860,
-        "wires": [
-            [
-                "8d98c8115a9eeb52"
-            ]
-        ]
-    },
-    {
-        "id": "8d98c8115a9eeb52",
-        "type": "function",
-        "z": "74d59a36524062f4",
-        "name": "prepare call",
-        "func": "var session = flow.get(\"session\");\nvar device = flow.get(\"device\");\nvar field = flow.get(\"field\");\nvar call = \"http://127.0.0.1:5000/api/\"+ device +\"/\"+ field + \"/\" + session\nmsg.payload = call\nflow.set(\"call\",call)\nreturn msg",
+        "z": "9ff186a6e56048ac",
+        "name": "function 4",
+        "func": "msg.payload = JSON.parse(msg.payload); // Konwertuj string JSON na obiekt JSON\nreturn msg;\n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1190,
-        "y": 760,
+        "x": 520,
+        "y": 720,
         "wires": [
             [
-                "11a7f8a8969beb1d"
+                "abd94eb4e1c5d91c"
             ]
         ]
     },
     {
-        "id": "1764ebfa855fbfc5",
-        "type": "http request",
-        "z": "74d59a36524062f4",
-        "name": "",
-        "method": "GET",
-        "ret": "txt",
-        "paytoqs": "ignore",
-        "url": "{{{payload}}}",
-        "tls": "",
-        "persist": false,
-        "proxy": "",
-        "insecureHTTPParser": false,
-        "authType": "",
-        "senderr": false,
-        "headers": [],
-        "x": 1630,
-        "y": 760,
-        "wires": [
-            [
-                "b9dfad89726111cc"
-            ]
-        ]
-    },
-    {
-        "id": "11a7f8a8969beb1d",
-        "type": "ui-button",
-        "z": "74d59a36524062f4",
-        "group": "b3d8bd568f7d52ae",
-        "name": "",
-        "label": "Download selected data",
-        "order": 0,
-        "width": 0,
-        "height": 0,
-        "emulateClick": false,
-        "tooltip": "",
-        "color": "",
-        "bgcolor": "",
+        "id": "942a36ba6f67aeec",
+        "type": "ui-group",
+        "name": "Data Control",
+        "page": "22da3639395340e4",
+        "width": "20",
+        "height": "1",
+        "order": 1,
+        "showTitle": true,
         "className": "",
-        "icon": "",
-        "iconPosition": "left",
-        "payload": "call",
-        "payloadType": "flow",
-        "topic": "topic",
-        "topicType": "msg",
-        "x": 1410,
-        "y": 760,
-        "wires": [
-            [
-                "1764ebfa855fbfc5"
-            ]
-        ]
+        "visible": "true",
+        "disabled": "false"
     },
     {
-        "id": "b9dfad89726111cc",
-        "type": "downloadfile",
-        "z": "74d59a36524062f4",
-        "name": "",
-        "filename": "data.json",
-        "encoding": "none",
-        "x": 1830,
-        "y": 760,
-        "wires": []
+        "id": "a0ba1c26fbb229b5",
+        "type": "ui-group",
+        "name": "Latitude",
+        "page": "22da3639395340e4",
+        "width": "20",
+        "height": "1",
+        "order": 4,
+        "showTitle": false,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "866ecad3517cd489",
+        "type": "ui-group",
+        "name": "Longitude",
+        "page": "22da3639395340e4",
+        "width": "20",
+        "height": "1",
+        "order": 5,
+        "showTitle": false,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "00cbb070dfaa9baf",
+        "type": "ui-group",
+        "name": "Speed",
+        "page": "22da3639395340e4",
+        "width": "20",
+        "height": "1",
+        "order": 7,
+        "showTitle": false,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "d3a468171151978b",
+        "type": "ui-group",
+        "name": "Altitude",
+        "page": "22da3639395340e4",
+        "width": "20",
+        "height": "1",
+        "order": 8,
+        "showTitle": false,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "cb340146829ab097",
+        "type": "ui-group",
+        "name": "Satellites",
+        "page": "22da3639395340e4",
+        "width": "20",
+        "height": "1",
+        "order": 9,
+        "showTitle": false,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "15ded955ca926cc6",
+        "type": "ui-group",
+        "name": "Statistics",
+        "page": "22da3639395340e4",
+        "width": "20",
+        "height": "1",
+        "order": 3,
+        "showTitle": false,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "a26721c1e2cfabc2",
+        "type": "ui-group",
+        "name": "Map",
+        "page": "22da3639395340e4",
+        "width": "20",
+        "height": "1",
+        "order": 6,
+        "showTitle": false,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "b34978f36ce6c263",
+        "type": "ui-group",
+        "name": "Alghoritm control",
+        "page": "22da3639395340e4",
+        "width": "20",
+        "height": "1",
+        "order": 2,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "ced1aee10f7070c6",
+        "type": "ui-base",
+        "name": "My Dashboard",
+        "path": "/dashboard",
+        "includeClientData": true,
+        "acceptsClientConfig": [
+            "ui-notification",
+            "ui-control"
+        ],
+        "showPathInSidebar": false,
+        "navigationStyle": "default"
+    },
+    {
+        "id": "8cf92dfac584d0ba",
+        "type": "websocket-client",
+        "path": "ws://127.0.0.1:5000/api/connected_devices",
+        "tls": "",
+        "wholemsg": "false",
+        "hb": "10",
+        "subprotocol": ""
+    },
+    {
+        "id": "22da3639395340e4",
+        "type": "ui-page",
+        "name": "Home",
+        "ui": "ced1aee10f7070c6",
+        "path": "/home",
+        "icon": "home",
+        "layout": "notebook",
+        "theme": "08b10e6c78fd3e99",
+        "order": -1,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "08b10e6c78fd3e99",
+        "type": "ui-theme",
+        "name": "Default Theme",
+        "colors": {
+            "surface": "#ffffff",
+            "primary": "#0094ce",
+            "bgPage": "#eeeeee",
+            "groupBg": "#ffffff",
+            "groupOutline": "#cccccc"
+        },
+        "sizes": {
+            "pagePadding": "12px",
+            "groupGap": "12px",
+            "groupBorderRadius": "4px",
+            "widgetGap": "12px"
+        }
     }
 ]
