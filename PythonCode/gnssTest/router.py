@@ -87,7 +87,7 @@ class Router:
 
         @self.app.route('/api/devices', methods=['GET'])
         def get_devices():
-            sessionid = request.args.get('sessionid')
+            sessionid = request.args.get('session_id')
             if sessionid is not None:
                 unique_devices = self.data_processor.get_unique_devices_per_session(sessionid)
             else:
@@ -99,7 +99,7 @@ class Router:
 
         @self.app.route('/api/session/data', methods=['GET'])
         def get_data():
-            sessionid = request.args.get('sessionid')
+            sessionid = request.args.get('session_id')
             device = request.args.get('device')
             field = request.args.get('field')
             if not sessionid or not device or not field:
@@ -124,7 +124,7 @@ class Router:
 
         @self.app.route('/api/session/field-count', methods=['GET'])
         def get_field_counts_per_session():
-            sessionid = request.args.get('sessionid')
+            sessionid = request.args.get('session_id')
             field = request.args.get('field')
             if not sessionid or not field:
                 return jsonify({"error": "Missing parameter"}), 400
@@ -139,7 +139,7 @@ class Router:
 
         @self.app.route('/api/average', methods=['GET'])
         def get_average_values():
-            sessionid = request.args.get('sessionid')
+            sessionid = request.args.get('session_id')
             if not sessionid:
                 return jsonify({"error": "Missing parameter"}), 400
             else:  
@@ -151,7 +151,7 @@ class Router:
 
         @self.app.route('/api/mode', methods=['GET'])
         def get_most_frequent_position():
-            sessionid = request.args.get('sessionid')
+            sessionid = request.args.get('session_id')
             if not sessionid:
                 return jsonify({"error": "Missing parameter"}), 400
             else:  
@@ -163,7 +163,7 @@ class Router:
 
         @self.app.route('/api/sigma', methods=['GET'])
         def get_sigma():
-            sessionid = request.args.get('sessionid')
+            sessionid = request.args.get('session_id')
             reference_type = request.args.get('reference_type')
             if not sessionid or not reference_type:
                 return jsonify({"error": "Missing parameter"}), 400
@@ -179,7 +179,7 @@ class Router:
 
         @self.app.route('/api/drms', methods=['GET'])
         def get_drms():
-            sessionid = request.args.get('sessionid')
+            sessionid = request.args.get('session_id')
             reference_type = request.args.get('reference_type')
             if not sessionid or not reference_type:
                 return jsonify({"error": "Missing parameter"}), 400
@@ -194,7 +194,7 @@ class Router:
 
         @self.app.route('/api/2drms', methods=['GET'])
         def get_2drms():
-            sessionid = request.args.get('sessionid')
+            sessionid = request.args.get('session_id')
             reference_type = request.args.get('reference_type')
             if not sessionid or not reference_type:
                 return jsonify({"error": "Missing parameter"}), 400
@@ -209,7 +209,7 @@ class Router:
                 
         @self.app.route('/api/cep', methods=['GET'])
         def get_cep():
-            sessionid = request.args.get('sessionid')
+            sessionid = request.args.get('session_id')
             reference_type = request.args.get('reference_type')
             if not sessionid or not reference_type:
                 return jsonify({"error": "Missing parameter"}), 400
