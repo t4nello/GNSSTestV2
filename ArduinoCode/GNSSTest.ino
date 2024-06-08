@@ -38,7 +38,6 @@ void connect() {
 
   client.publish("esp/connection/connected", WiFi.macAddress());
   client.subscribe("esp/detect");
-  client.subscribe("esp/heartbeat/receive");
   client.subscribe("gps/metric/enable");
   client.subscribe("gps/metric/disable");
 }
@@ -57,14 +56,10 @@ void messageReceived(String &topic, String &payload) {
     }
     else
     enableGps = true;
-    
-   
+  
   } else if (topic.compareTo("gps/metric/disable") == 0) {
     enableGps = false;
   }
-  else if (topic.compareTo("esp/heartbeat/receive") == 0)
-    client.publish("esp/heartbeat/send", WiFi.macAddress());
-}
 
 long convertGPSDateTime() {
         int year = gps.date.year();
