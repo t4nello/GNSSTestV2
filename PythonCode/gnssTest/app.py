@@ -25,4 +25,4 @@ mqtt_manager = MqttManager(app)
 algorithm = Algorithm(mqtt_manager)
 mqtt_manager.set_algorithm(algorithm)
 
-router = Router(app, sockets, mqtt_manager, config_manager, data_processor, MeasurandCalculator, algorithm.on_threshold_received)
+router = Router(app, sockets, mqtt_manager, config_manager, data_processor, MeasurandCalculator, algorithm)

@@ -5,14 +5,14 @@ from algorithm import Algorithm
 import json
 
 class Router:
-    def __init__(self, app, sockets, mqtt_manager, config_manager, data_processor, measurand_calculator, threshold_callback):
+    def __init__(self, app, sockets, mqtt_manager, config_manager, data_processor, measurand_calculator, algorithm):
         self.app = app
         self.mqtt_manager = mqtt_manager
         self.session_manager = SessionManager(mqtt_manager, config_manager)
         self.data_processor = data_processor
         self.sockets = sockets 
         self.measurand_calculator = measurand_calculator(self.data_processor)
-        self.threshold_callback = threshold_callback
+        self.algorithm = algorithm
         self.valid_fields = ["latitude", "longitude", "position", "speed", "satellites", "altitude"]
         self.setup_routes()
         self.setup_signal_handlers()
@@ -27,6 +27,14 @@ class Router:
         disconnected_device = kwargs.get('device')
         self.send_message_to_websocket({"disconnected_device": disconnected_device})
 
+    def send_operative_device(self, sender, **kwargs):
+        connected_device = kwargs.get('device')
+        self.send_message_to_websocket({"operative_device": connected_device})
+
+    def send_faulted_device(self, sender, **kwargs):
+        disconnected_device = kwargs.get('device')
+        self.send_message_to_websocket({"faulted_device": disconnected_device})
+
     def send_message_to_websocket(self, message):
         for client in self.sockets.clients:
             client.send("ping")
@@ -35,6 +43,9 @@ class Router:
     def setup_signal_handlers(self):
         self.mqtt_manager.device_connected.connect(self.send_connected_device)
         self.mqtt_manager.device_disconnected.connect(self.send_disconnected_device)
+        self.algorithm.device_faulted.connect(self.send_faulted_device)  # Poprawka
+        self.algorithm.device_operative.connect(self.send_operative_device)  # Poprawka
+        
     
     def send_message_to_websocket(self, message):
         clients = self.client_list.copy()
@@ -230,7 +241,7 @@ class Router:
         def get_threshold():
             try:
                 threshold = request.json.get('threshold')
-                self.threshold_callback(threshold)
+                self.algorithm.on_threshold_received(threshold)
                 return jsonify({"message": "Threshold set successfully", "threshold": threshold}), 200
             except ValueError as e:
                 return jsonify({"error": str(e)}), 400
