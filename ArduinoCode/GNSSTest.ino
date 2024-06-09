@@ -14,8 +14,8 @@
 #define GPSBaud 9600
 #define LED_BUILTIN 2
 
-const char ssid[] = "Woz_operacyjny_ABW";
-const char pass[] = "PiwkoPaliwko123!";
+const char ssid[] = "CHANGEME";
+const char pass[] = "CHANGEME";
 
 TinyGPSPlus gps;
 SoftwareSerial ss(RxPin, txPin);
@@ -47,7 +47,7 @@ void messageReceived(String &topic, String &payload) {
 
   if (topic.compareTo("esp/detect") == 0 && payload.compareTo(WiFi.macAddress()) == 0) {
      digitalWrite(LED_BUILTIN, LOW);
-     delay(100);
+     delay(200);
      digitalWrite(LED_BUILTIN, HIGH);    
   } else if (topic.compareTo("gps/metric/enable") == 0) {
     SessionId = payload.toInt();
