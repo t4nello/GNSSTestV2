@@ -53,7 +53,7 @@ class Router:
             try:
                 client.send(json.dumps(message))
             except:
-                None
+                clients.remove(client)
 
     def setup_routes(self):
         @self.sockets.route('/api/connected_devices', websocket=True)
